@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.3</title>
+  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.4</title>
   <!-- Google Identity Services untuk Google Sign-In -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
@@ -57,7 +57,7 @@
     }
     .panel.active { display: block; }
 
-    /* ================= FULL SCREEN ARENA MAGICAL ALA GENSHIN ================= */
+    /* ================= ARENA CLEAN & DRAMATIS ================= */
     .tekken-stage {
       position: relative; width: 100%; height: 520px; border-radius: 24px;
       overflow: hidden; border: 4px solid #fff;
@@ -72,21 +72,8 @@
     .genshin-lighting {
       position: absolute; inset: 0; pointer-events: none; z-index: 2;
       background:
-        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.25), transparent 65%),
-        linear-gradient(180deg, rgba(255, 230, 242, 0.2) 0%, transparent 35%, rgba(45, 10, 35, 0.28) 100%);
-    }
-
-    .ambient-layer {
-      position: absolute; inset: 0; pointer-events: none; z-index: 4; overflow: hidden;
-    }
-    .ambient-item {
-      position: absolute; font-size: 1.6rem; opacity: 0.88;
-      filter: drop-shadow(0 0 10px #fff);
-      animation: floatAmbient 5.5s ease-in-out infinite alternate;
-    }
-    @keyframes floatAmbient {
-      0% { transform: translateY(0px) rotate(0deg) scale(0.9); }
-      100% { transform: translateY(-35px) rotate(25deg) scale(1.18); }
+        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.2), transparent 70%),
+        linear-gradient(180deg, rgba(255, 230, 242, 0.12) 0%, transparent 40%, rgba(45, 10, 35, 0.22) 100%);
     }
 
     .stage-location-pill {
@@ -95,6 +82,18 @@
       padding: 6px 20px; border-radius: 22px; font-weight: 900; font-size: 0.82rem;
       border: 2px solid var(--pink-pastel); box-shadow: 0 4px 14px rgba(0,0,0,0.18);
       white-space: nowrap;
+    }
+
+    /* SCREEN SHAKE EFFECT UNTUK HANTAMAN DRAMATIS */
+    .screen-shake {
+      animation: stageShake 0.35s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes stageShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(-8px, 4px) rotate(-0.5deg); }
+      40% { transform: translate(8px, -4px) rotate(0.8deg); }
+      60% { transform: translate(-6px, -3px) rotate(-0.5deg); }
+      80% { transform: translate(6px, 3px) rotate(0.5deg); }
     }
 
     /* ================= TEKKEN TOP HUD ================= */
@@ -203,7 +202,7 @@
 
     .transparent-char-img, .boss-char-img {
       width: 100%; height: 100%; object-fit: contain; object-position: bottom center;
-      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
+      filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
     }
 
     /* EKSPRESI WAJAH */
@@ -286,24 +285,24 @@
     }
 
     .dmg-popup {
-      position: absolute; font-weight: 900; font-size: 2rem; font-style: italic;
-      text-shadow: 2px 2px 0 #fff, 0 3px 12px rgba(184, 37, 101, 0.65);
+      position: absolute; font-weight: 900; font-size: 2.2rem; font-style: italic;
+      text-shadow: 2px 2px 0 #fff, 0 4px 14px rgba(184, 37, 101, 0.75);
       pointer-events: none; z-index: 55;
-      animation: dmgPopAnim 0.9s ease-out forwards;
+      animation: dmgPopAnim 0.95s ease-out forwards;
     }
     @keyframes dmgPopAnim {
-      0% { transform: translate(-50%, 0) scale(0.5); opacity: 1; }
-      35% { transform: translate(-50%, -35px) scale(1.35); opacity: 1; }
-      100% { transform: translate(-50%, -75px) scale(1); opacity: 0; }
+      0% { transform: translate(-50%, 0) scale(0.4); opacity: 1; }
+      35% { transform: translate(-50%, -40px) scale(1.4); opacity: 1; }
+      100% { transform: translate(-50%, -85px) scale(1.05); opacity: 0; }
     }
 
     .particle-burst {
-      position: absolute; font-size: 2.1rem; pointer-events: none;
-      animation: burstOut 0.65s ease-out forwards;
+      position: absolute; font-size: 2.3rem; pointer-events: none;
+      animation: burstOut 0.7s ease-out forwards;
     }
     @keyframes burstOut {
-      0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
-      100% { transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(45deg); opacity: 0; }
+      0% { transform: translate(0, 0) scale(0.4); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(1.8) rotate(45deg); opacity: 0; }
     }
 
     /* STATUS & TOMBOL RAMAH/FRIENDLY */
@@ -401,9 +400,9 @@
 
   <!-- TAB 1: BATTLE ARENA -->
   <div id="tab-battle" class="panel active">
+    <!-- Arena tanpa emoticon berterbangan di background (clean & aesthetic) -->
     <div class="tekken-stage" id="battle-arena" style="background-image: url('bg_mosaic.jpg');">
       <div class="genshin-lighting"></div>
-      <div class="ambient-layer" id="ambient-layer"></div>
 
       <div class="stage-location-pill" id="stage-location-pill">🏰 Crystal Mosaic Cathedral Sanctuary</div>
       <div class="fx-layer" id="fx-layer"></div>
@@ -461,7 +460,7 @@
           </div>
         </div>
 
-        <!-- BOSS MONSTER (MENGGUNAKAN PNG TRANSPARAN DI KANAN) -->
+        <!-- BOSS MONSTER DI KANAN (SUPPORT PNG / JPG & EKSPRESI _atk / _hit) -->
         <div class="rig-container" id="e-rig">
           <div class="ground-shadow"></div>
           <div class="fighter-aura" id="e-aura"></div>
@@ -488,7 +487,7 @@
     </div>
 
     <div class="battle-log" id="battle-log">
-      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.3!</b> Boss monster kini menggunakan format file `.png` transparan yang bersih! Musuh menyerang otomatis secara kontinu.</div>
+      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.4!</b> Latar belakang bersih tanpa emoticon melayang. Efek dramatis layar berguncang (*screen shake*) dan animasi ekspresi musuh aktif sepenuhnya!</div>
     </div>
   </div>
 
@@ -592,7 +591,7 @@
   }
 
   // =========================================================================
-  // 3. DATABASE 9 FIGHTER & 5 BOSS MONSTER (BERFORMAT .PNG)
+  // 3. DATABASE 9 FIGHTER & 5 BOSS MONSTER (DISESUAIKAN DENGAN NAMA DI GITHUB)
   // =========================================================================
   const SKINS_DB = [
     {
@@ -600,81 +599,73 @@
       role: "Prism Shielder", hp: 580, atk: 72, skillName: "Prism Mosaic Nova", ultName: "DIAMOND CATHEDRAL FINISH",
       skillMult: 2.1, bonusHeal: 140, projIcon: "💎", partIcons: ["💎", "✨", "🌸"], auraColor: "#ff9ec6",
       gloveColor: "#ffd700", weaponSvg: "💎", atkExpr: "😠💎 PRISM SLASH!", skillExpr: "😤✨ MOSAIC POWER!",
-      effectType: "shield", effectDesc: "Perisai Kristal (+150 Shield)", stageName: "🏰 Crystal Mosaic Cathedral Sanctuary",
-      ambientIcons: ["💎", "🌸", "✨", "🦋"]
+      effectType: "shield", effectDesc: "Perisai Kristal (+150 Shield)", stageName: "🏰 Crystal Mosaic Cathedral Sanctuary"
     },
     {
       id: "shayla_gold", name: "Shayla - Golden Chain Goddess", img: "shayla_gold.png", bgImg: "bg_gold.jpg",
       role: "Chain Controller", hp: 550, atk: 85, skillName: "Golden Chain Bind", ultName: "EMPRESS CHAIN PRISON",
       skillMult: 2.3, bonusHeal: 110, projIcon: "⛓️", partIcons: ["⛓️", "🪙", "✨"], auraColor: "#ffe082",
       gloveColor: "#ffab00", weaponSvg: "⛓️", atkExpr: "😠⛓️ CHAIN WHIP!", skillExpr: "😈🔒 LOCKDOWN!",
-      effectType: "stun", effectDesc: "Mengikat & Stun Musuh 1 Giliran", stageName: "👑 Grand Golden Celestial Ballroom",
-      ambientIcons: ["✨", "👑", "🪙", "🌸"]
+      effectType: "stun", effectDesc: "Mengikat & Stun Musuh 1 Giliran", stageName: "👑 Grand Golden Celestial Ballroom"
     },
     {
       id: "shayla_yellow", name: "Shayla - Sunburst Corset", img: "shayla_yellow.png", bgImg: "bg_yellow.jpg",
       role: "Solar Striker", hp: 510, atk: 95, skillName: "Sunbeam Ribbon Slash", ultName: "SUPERNOVA RUNWAY FLARE",
       skillMult: 2.4, bonusHeal: 100, projIcon: "☀️", partIcons: ["☀️", "🌻", "✨"], auraColor: "#fff176",
       gloveColor: "#ffea00", weaponSvg: "☀️", atkExpr: "😡☀️ SOLAR STRIKE!", skillExpr: "🔥😆 BURN BRIGHT!",
-      effectType: "burn", effectDesc: "Membakar Musuh (Burn 3 Giliran)", stageName: "🌻 Sunburst Windmill Flower Meadow",
-      ambientIcons: ["☀️", "🌻", "🌼", "✨"]
+      effectType: "burn", effectDesc: "Membakar Musuh (Burn 3 Giliran)", stageName: "🌻 Sunburst Windmill Flower Meadow"
     },
     {
       id: "shayla_ocean", name: "Shayla - Ocean Pearl Siren", img: "shayla_ocean.png", bgImg: "bg_ocean.jpg",
       role: "Hydro Healer", hp: 650, atk: 78, skillName: "Tidal Pearl Vortex", ultName: "ATLANTIS TSUNAMI ENCORE",
       skillMult: 2.0, bonusHeal: 250, projIcon: "🌊", partIcons: ["🫧", "🐚", "💧"], auraColor: "#84ffff",
       gloveColor: "#00e5ff", weaponSvg: "🔱", atkExpr: "😠🌊 AQUA WAVE!", skillExpr: "🧜‍♀️💙 SIREN BLESS!",
-      effectType: "regen", effectDesc: "Menyerang & Pulihkan +160 HP", stageName: "🐚 Underwater Mermaid Pearl Lagoon",
-      ambientIcons: ["🫧", "🐚", "🐬", "✨"]
+      effectType: "regen", effectDesc: "Menyerang & Pulihkan +160 HP", stageName: "🐚 Underwater Mermaid Pearl Lagoon"
     },
     {
       id: "shayla_pop", name: "Shayla - Pink Fur Pop Diva", img: "shayla_pop.png", bgImg: "bg_pop.jpg",
       role: "Sonic Enchanter", hp: 530, atk: 100, skillName: "Pink Spotlight Bassdrop", ultName: "WORLD TOUR MEGASTAR",
       skillMult: 2.5, bonusHeal: 130, projIcon: "🎤", partIcons: ["🎵", "💖", "🎶"], auraColor: "#ff80ab",
       gloveColor: "#ff4081", weaponSvg: "🎤", atkExpr: "😜🎤 MIC DROP!", skillExpr: "🤩🎶 HIGH NOTE!",
-      effectType: "atk_up", effectDesc: "Buff Attack Diri +35% (3 Giliran)", stageName: "🎤 Pastel Pink Starlight Opera Arena",
-      ambientIcons: ["💖", "🎵", "🎶", "🌸"]
+      effectType: "atk_up", effectDesc: "Buff Attack Diri +35% (3 Giliran)", stageName: "🎤 Pastel Pink Starlight Opera Arena"
     },
     {
       id: "shayla_biker", name: "Shayla - Crimson Rebel Biker", img: "shayla_biker.png", bgImg: "bg_biker.jpg",
       role: "Lethal Brawler", hp: 490, atk: 122, skillName: "Crimson Leather Blitz", ultName: "FULL THROTTLE KNOCKOUT",
       skillMult: 2.9, bonusHeal: 90, projIcon: "🔥", partIcons: ["💥", "🔥", "🌸"], auraColor: "#ff8a80",
       gloveColor: "#d81b60", weaponSvg: "🥊", atkExpr: "😡👊 REBEL PUNCH!", skillExpr: "🤬🔥 CRIT SMASH!",
-      effectType: "crit", effectDesc: "Pasti Critical Hit Berlipat Ganda", stageName: "⛩️ Crimson Cherry Blossom Cliff Shrine",
-      ambientIcons: ["🌸", "🔥", "🍁", "✨"]
+      effectType: "crit", effectDesc: "Pasti Critical Hit Berlipat Ganda", stageName: "⛩️ Crimson Cherry Blossom Cliff Shrine"
     },
     {
       id: "shayla_galaxy", name: "Shayla - Starlight Nebula", img: "shayla_galaxy.png", bgImg: "bg_galaxy.jpg",
       role: "Cosmic Sorceress", hp: 540, atk: 115, skillName: "Nebula Sequins Meteor", ultName: "BIG BANG COLLAPSE",
       skillMult: 2.7, bonusHeal: 120, projIcon: "☄️", partIcons: ["🪐", "🌌", "⭐"], auraColor: "#b388ff",
       gloveColor: "#7c4dff", weaponSvg: "🪐", atkExpr: "😠🌌 STAR SHOT!", skillExpr: "🔮✨ COSMIC GRAVITY!",
-      effectType: "weaken", effectDesc: "Melemahkan Attack Musuh -40%", stageName: "🪐 Starlight Astral Galaxy Observatory",
-      ambientIcons: ["🪐", "⭐", "🌙", "✨"]
+      effectType: "weaken", effectDesc: "Melemahkan Attack Musuh -40%", stageName: "🪐 Starlight Astral Galaxy Observatory"
     },
     {
       id: "shayla_royal", name: "Shayla - Sovereign Lace Queen", img: "shayla_royal.png", bgImg: "bg_royal.jpg",
       role: "Royal Paladin", hp: 700, atk: 110, skillName: "Emerald Leaf Judgment", ultName: "ROYAL CORONATION FINALE",
       skillMult: 2.6, bonusHeal: 185, projIcon: "🌿", partIcons: ["🍃", "👑", "🌹"], auraColor: "#b9f6ca",
       gloveColor: "#ffd54f", weaponSvg: "👑", atkExpr: "😠👑 ROYAL SLASH!", skillExpr: "😌🌿 QUEEN DECREE!",
-      effectType: "shield_heal", effectDesc: "Memberi +130 Shield & +130 HP", stageName: "🌹 Royal Emerald & Rose Botanical Palace",
-      ambientIcons: ["🌹", "🍃", "👑", "🦋"]
+      effectType: "shield_heal", effectDesc: "Memberi +130 Shield & +130 HP", stageName: "🌹 Royal Emerald & Rose Botanical Palace"
     },
     {
       id: "shelly_purple", name: "Shelly - Amethyst Night Princess", img: "shelly_purple.png", bgImg: "bg_shelly.jpg",
       role: "Dark Archmage (SSR)", hp: 670, atk: 140, skillName: "Violet Ruffle Apocalypse", ultName: "ABYSSAL MIDNIGHT REQUIEM",
       skillMult: 3.2, bonusHeal: 170, projIcon: "🔮", partIcons: ["🔮", "🦋", "💜"], auraColor: "#ea80fc",
       gloveColor: "#9c27b0", weaponSvg: "🔮", atkExpr: "😈🔮 DARK BOLT!", skillExpr: "🧛‍♀️💜 SOUL DRAIN!",
-      effectType: "lifesteal", effectDesc: "Menyedot 50% Damage Jadi HP", stageName: "🦋 Enchanted Amethyst Wisteria Castle",
-      ambientIcons: ["🦋", "💜", "🔮", "🌸"]
+      effectType: "lifesteal", effectDesc: "Menyedot 50% Damage Jadi HP", stageName: "🦋 Enchanted Amethyst Wisteria Castle"
     }
   ];
 
+  // Diset akurat sesuai nama file di github Anda (boss_critic, boss_mecha, boss_witch, boss_dragon, Velvet Crystal Porcupine)
   const MONSTER_BOSSES = [
     { name: "Shadow Critic Empress", proj: "🌑", aura: "#ff80ab", img: "boss_critic.png" },
     { name: "Cyber Runway Mecha", proj: "⚡", aura: "#80deea", img: "boss_mecha.png" },
     { name: "Neon Envy Witch", proj: "🧪", aura: "#b9f6ca", img: "boss_witch.png" },
     { name: "Abyss Couture Dragon", proj: "☄️", aura: "#ea80fc", img: "boss_dragon.png" },
-    { name: "Velvet Crystal Porcupine", proj: "💎", aura: "#ff4081", img: "boss_quill.png" }
+    { name: "Velvet Crystal Porcupine", proj: "💎", aura: "#ff4081", img: "Velvet Crystal Porcupine.jpg" }
   ];
 
   // =========================================================================
@@ -725,22 +716,9 @@
 
   function applyCharacterStageTheme(skin) {
     const arena = document.getElementById("battle-arena");
-    const ambient = document.getElementById("ambient-layer");
     const locPill = document.getElementById("stage-location-pill");
-
     arena.style.backgroundImage = `url('${skin.bgImg}')`;
     locPill.innerText = skin.stageName;
-
-    ambient.innerHTML = "";
-    for (let i = 0; i < 10; i++) {
-      const sp = document.createElement("div");
-      sp.className = "ambient-item";
-      sp.innerText = skin.ambientIcons[i % skin.ambientIcons.length];
-      sp.style.left = (8 + (i * 9)) + "%";
-      sp.style.top = (15 + ((i * 17) % 45)) + "%";
-      sp.style.animationDelay = (i * 0.4) + "s";
-      ambient.appendChild(sp);
-    }
   }
 
   function renderPuppetArms(skin) {
@@ -770,6 +748,12 @@
     el.classList.remove("show");
     void el.offsetWidth;
     el.classList.add("show");
+  }
+
+  function triggerScreenShake() {
+    const arena = document.getElementById("battle-arena");
+    arena.classList.add("screen-shake");
+    setTimeout(() => arena.classList.remove("screen-shake"), 350);
   }
 
   // =========================================================================
@@ -825,7 +809,7 @@
   }
 
   // =========================================================================
-  // 6. ANIMASI & EFEK PERTARUNGAN
+  // 6. ANIMASI & EFEK PERTARUNGAN DRAMATIS
   // =========================================================================
   function spawnProjectile(icon) {
     const layer = document.getElementById("fx-layer");
@@ -846,11 +830,11 @@
       p.style.left = centerX + "%";
       p.style.top = "52%";
       const angle = (Math.PI * 2 * i) / 12;
-      const dist = 65 + Math.random() * 85;
+      const dist = 70 + Math.random() * 90;
       p.style.setProperty("--tx", `${Math.cos(angle) * dist}px`);
       p.style.setProperty("--ty", `${Math.sin(angle) * dist}px`);
       layer.appendChild(p);
-      setTimeout(() => p.remove(), 650);
+      setTimeout(() => p.remove(), 700);
     }
   }
 
@@ -863,7 +847,7 @@
     pop.style.color = color;
     pop.innerHTML = text;
     layer.appendChild(pop);
-    setTimeout(() => pop.remove(), 900);
+    setTimeout(() => pop.remove(), 950);
   }
 
   function updateComboUI() {
@@ -916,7 +900,7 @@
   }
 
   // =========================================================================
-  // 7. AKSI PEMAIN & PERGANTIAN GAMBAR _atk.png
+  // 7. AKSI PEMAIN, EFEK DRAMATIS, & PERGANTIAN EKSPRESI BOSS (_hit.png / _atk.png)
   // =========================================================================
   function playerAction(type) {
     if (battle.busy) return;
@@ -932,6 +916,12 @@
     let baseAtk = skin.atk + (player.level * 10);
     if (battle.pAtkBuff > 0) baseAtk = Math.floor(baseAtk * 1.35);
 
+    const stg = player.maxStage;
+    const boss = MONSTER_BOSSES[(stg - 1) % MONSTER_BOSSES.length];
+    const bossExt = boss.img.includes('.jpg') ? '.jpg' : '.png';
+    const bossBase = boss.img.replace(bossExt, '');
+    const monsterGraphic = document.getElementById("e-monster-graphic");
+
     if (type === 'attack') {
       playSfx('atk');
       battle.combo++;
@@ -946,18 +936,23 @@
         battle.eHp = Math.max(0, battle.eHp - dmg);
         battle.pUlt = Math.min(100, battle.pUlt + 25);
 
+        // Ubah ekspresi boss ke _hit.png saat terkena pukul
+        monsterGraphic.innerHTML = `<img src="${bossBase}_hit.png" class="boss-char-img" alt="${boss.name}" />`;
         eRig.classList.add("tekken-knockback");
+        triggerScreenShake();
+
         spawnParticleBurst(skin.partIcons, 'enemy');
         showFloatingText(`👊 -${dmg}`, 'enemy', '#d81b60');
-        logBattle(`👊 <b>${skin.name}</b> menyerang sebesar <b>${dmg} DMG</b>!`);
+        logBattle(`👊 <b>${skin.name}</b> menyerang musuh sebesar <b>${dmg} DMG</b>!`);
 
         setTimeout(() => {
           pRig.classList.remove("tekken-lunge-right");
           pBody.classList.remove("swing-attack");
           pImg.src = skin.img;
           eRig.classList.remove("tekken-knockback");
+          monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
           afterPlayerTurn();
-        }, 350);
+        }, 380);
       }, 300);
 
     } else if (type === 'skill') {
@@ -990,7 +985,10 @@
         }
 
         battle.eHp = Math.max(0, battle.eHp - dmg);
+        monsterGraphic.innerHTML = `<img src="${bossBase}_hit.png" class="boss-char-img" alt="${boss.name}" />`;
         eRig.classList.add("tekken-knockback");
+        triggerScreenShake();
+
         spawnParticleBurst(skin.partIcons, 'enemy');
         showFloatingText(`✨ -${dmg}`, 'enemy', '#8e24aa');
         logBattle(`✨ <b>${skin.skillName}!</b> Menghantam musuh sebesar <b>${dmg} DMG</b>${fxText}`);
@@ -999,8 +997,9 @@
           pBody.classList.remove("swing-attack");
           pImg.src = skin.img;
           eRig.classList.remove("tekken-knockback");
+          monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
           afterPlayerTurn();
-        }, 380);
+        }, 420);
       }, 400);
 
     } else if (type === 'ult') {
@@ -1020,7 +1019,10 @@
         battle.pShield += 140;
         battle.eHp = Math.max(0, battle.eHp - dmg);
 
+        monsterGraphic.innerHTML = `<img src="${bossBase}_hit.png" class="boss-char-img" alt="${boss.name}" />`;
         eRig.classList.add("tekken-knockback");
+        triggerScreenShake();
+
         spawnParticleBurst(skin.partIcons, 'enemy');
         spawnParticleBurst(["💥", "👑", "🌸"], 'enemy');
         showFloatingText(`👑 RAGE ART -${dmg}!`, 'enemy', '#ff1e7a');
@@ -1031,9 +1033,10 @@
           pBody.classList.remove("swing-attack");
           pImg.src = skin.img;
           eRig.classList.remove("tekken-knockback");
+          monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
           afterPlayerTurn();
-        }, 450);
-      }, 500);
+        }, 500);
+      }, 480);
 
     } else if (type === 'heal') {
       playSfx('heal');
@@ -1087,6 +1090,9 @@
     battle.busy = false;
   }
 
+  // =========================================================================
+  // 8. MUSUH MENYERANG OTOMATIS DENGAN EKSPRESI _atk.png
+  // =========================================================================
   function enemyTurn() {
     if (battle.eStun > 0) {
       battle.eStun--;
@@ -1098,16 +1104,22 @@
     const skin = getActiveSkin();
     const stg = player.maxStage;
     const boss = MONSTER_BOSSES[(stg - 1) % MONSTER_BOSSES.length];
+    const bossExt = boss.img.includes('.jpg') ? '.jpg' : '.png';
+    const bossBase = boss.img.replace(bossExt, '');
+    
     const eRig = document.getElementById("e-rig");
     const pRig = document.getElementById("p-rig");
     const pImg = document.getElementById("p-img");
+    const monsterGraphic = document.getElementById("e-monster-graphic");
 
     playSfx('atk');
+    // Ubah ekspresi boss ke _atk.png saat menyerang
+    monsterGraphic.innerHTML = `<img src="${bossBase}_atk.png" class="boss-char-img" alt="${boss.name}" />`;
     eRig.classList.add("tekken-lunge-left");
 
     setTimeout(() => {
-      // Otomatis ubah gambar ke file _hit.png saat terkena serangan
       pImg.src = skin.id + "_hit.png";
+      triggerScreenShake();
 
       let eDmg = Math.floor(battle.eAtk * (0.9 + Math.random() * 0.25));
       if (battle.eWeaken > 0) {
@@ -1141,6 +1153,7 @@
         eRig.classList.remove("tekken-lunge-left");
         pRig.classList.remove("tekken-knockback");
         pImg.src = skin.img;
+        monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
 
         if (battle.pHp <= 0) {
           if (battle.enemyTimer) clearInterval(battle.enemyTimer);
@@ -1149,12 +1162,12 @@
           return;
         }
         updateBattleUI();
-      }, 380);
-    }, 280);
+      }, 400);
+    }, 300);
   }
 
   // =========================================================================
-  // 8. WARDROBE, GACHA & GOOGLE SHEETS
+  // 9. WARDROBE, GACHA & GOOGLE SHEETS
   // =========================================================================
   function renderWardrobe() {
     const grid = document.getElementById("skin-grid");
