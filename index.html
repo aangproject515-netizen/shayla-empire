@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.2</title>
+  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.3</title>
   <!-- Google Identity Services untuk Google Sign-In -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
@@ -204,12 +204,6 @@
     .transparent-char-img, .boss-char-img {
       width: 100%; height: 100%; object-fit: contain; object-position: bottom center;
       filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
-    }
-    .boss-char-img {
-      border-radius: 30px;
-      -webkit-mask-image: radial-gradient(ellipse 82% 88% at 50% 52%, #000 72%, transparent 98%);
-      mask-image: radial-gradient(ellipse 82% 88% at 50% 52%, #000 72%, transparent 98%);
-      filter: drop-shadow(0 8px 18px rgba(156, 39, 176, 0.5));
     }
 
     /* EKSPRESI WAJAH */
@@ -450,9 +444,9 @@
         <div class="combo-lbl">HIT COMBO!</div>
       </div>
 
-      <!-- FIGHTERS & BOSS DI ARENA (MENGHADAP KANAN KE ARAH MUSUH) -->
+      <!-- FIGHTERS & BOSS DI ARENA -->
       <div class="fighters-stage-area">
-        <!-- PLAYER (MENHADAP KANAN) -->
+        <!-- PLAYER -->
         <div class="rig-container" id="p-rig">
           <div class="ground-shadow"></div>
           <div class="fighter-aura" id="p-aura"></div>
@@ -461,14 +455,13 @@
             <div class="face-expression" id="p-expr">
               <span class="expr-badge" id="p-expr-text">😠⚡ FIERCE!</span>
             </div>
-            <!-- Gambar karakter (dinamis berganti ke _atk.png dan _hit.png) -->
             <img id="p-img" class="transparent-char-img" src="shayla_mosaic.png" alt="Shayla" style="transform: scaleX(1);" />
             <div class="puppet-arm left-arm" id="p-arm-l"></div>
             <div class="puppet-arm right-arm" id="p-arm-r"></div>
           </div>
         </div>
 
-        <!-- BOSS MONSTER DI KANAN -->
+        <!-- BOSS MONSTER (MENGGUNAKAN PNG TRANSPARAN DI KANAN) -->
         <div class="rig-container" id="e-rig">
           <div class="ground-shadow"></div>
           <div class="fighter-aura" id="e-aura"></div>
@@ -486,7 +479,7 @@
       <div class="status-badges" id="e-statuses"></div>
     </div>
 
-    <!-- TOMBOL KOMBO PERTARUNGAN (FRIENDLY & MODERN) -->
+    <!-- TOMBOL KOMBO PERTARUNGAN -->
     <div class="battle-controls">
       <button class="btn-action btn-atk" id="btn-atk" onclick="playerAction('attack')">👊 Glam Combo Strike</button>
       <button class="btn-action btn-skill" id="btn-skill" onclick="playerAction('skill')">✨ <span id="lbl-skill">Signature Skill</span> (CD: <span id="cd-skill">0</span>)</button>
@@ -495,7 +488,7 @@
     </div>
 
     <div class="battle-log" id="battle-log">
-      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.2!</b> Karakter kini otomatis berganti ekspresi & file gambar saat menyerang (`_atk.png`) dan terkena hit (`_hit.png`). Musuh menyerang kontinu secara otomatis!</div>
+      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.3!</b> Boss monster kini menggunakan format file `.png` transparan yang bersih! Musuh menyerang otomatis secara kontinu.</div>
     </div>
   </div>
 
@@ -599,7 +592,7 @@
   }
 
   // =========================================================================
-  // 3. DATABASE 9 FIGHTER & 5 BOSS MONSTER
+  // 3. DATABASE 9 FIGHTER & 5 BOSS MONSTER (BERFORMAT .PNG)
   // =========================================================================
   const SKINS_DB = [
     {
@@ -780,7 +773,7 @@
   }
 
   // =========================================================================
-  // 5. SETUP & MUSUH NYERANG TERUS SECARA KONTINU (NO WAIT)
+  // 5. SETUP STAGE & MUSUH MENYERANG OTOMATIS
   // =========================================================================
   function setupStage() {
     if (battle.enemyTimer) clearInterval(battle.enemyTimer);
@@ -824,7 +817,6 @@
     updateBattleUI();
     showAnnouncer(`STAGE ${stg} - FIGHT!`);
 
-    // Musuh menyerang terus menerus setiap 3.2 detik jika pemain diam
     battle.enemyTimer = setInterval(() => {
       if (battle.eHp > 0 && battle.pHp > 0 && !battle.busy) {
         enemyTurn();
@@ -833,7 +825,7 @@
   }
 
   // =========================================================================
-  // 6. ANIMASI & EFEK PERTARUNGAN DRAMATIS
+  // 6. ANIMASI & EFEK PERTARUNGAN
   // =========================================================================
   function spawnProjectile(icon) {
     const layer = document.getElementById("fx-layer");
@@ -924,7 +916,7 @@
   }
 
   // =========================================================================
-  // 7. AKSI PEMAIN & PERUBAHAN GAMBAR ATK / HIT / IDLE
+  // 7. AKSI PEMAIN & PERGANTIAN GAMBAR _atk.png
   // =========================================================================
   function playerAction(type) {
     if (battle.busy) return;
@@ -935,7 +927,6 @@
     const pImg = document.getElementById("p-img");
     const eRig = document.getElementById("e-rig");
 
-    // Otomatis ubah gambar ke file _atk.png saat menyerang
     pImg.src = skin.id + "_atk.png";
 
     let baseAtk = skin.atk + (player.level * 10);
@@ -958,12 +949,12 @@
         eRig.classList.add("tekken-knockback");
         spawnParticleBurst(skin.partIcons, 'enemy');
         showFloatingText(`👊 -${dmg}`, 'enemy', '#d81b60');
-        logBattle(`👊 <b>${skin.name}</b> menghadap kanan dan menyerang sebesar <b>${dmg} DMG</b>!`);
+        logBattle(`👊 <b>${skin.name}</b> menyerang sebesar <b>${dmg} DMG</b>!`);
 
         setTimeout(() => {
           pRig.classList.remove("tekken-lunge-right");
           pBody.classList.remove("swing-attack");
-          pImg.src = skin.img; // Kembalikan ke gambar normal (idle)
+          pImg.src = skin.img;
           eRig.classList.remove("tekken-knockback");
           afterPlayerTurn();
         }, 350);
@@ -1006,7 +997,7 @@
 
         setTimeout(() => {
           pBody.classList.remove("swing-attack");
-          pImg.src = skin.img; // Kembalikan ke gambar normal
+          pImg.src = skin.img;
           eRig.classList.remove("tekken-knockback");
           afterPlayerTurn();
         }, 380);
@@ -1038,7 +1029,7 @@
         setTimeout(() => {
           pRig.classList.remove("tekken-lunge-right");
           pBody.classList.remove("swing-attack");
-          pImg.src = skin.img; // Kembalikan ke gambar normal
+          pImg.src = skin.img;
           eRig.classList.remove("tekken-knockback");
           afterPlayerTurn();
         }, 450);
@@ -1060,7 +1051,7 @@
 
       setTimeout(() => {
         pBody.classList.remove("swing-attack");
-        pImg.src = skin.img; // Kembalikan ke gambar normal
+        pImg.src = skin.img;
         afterPlayerTurn();
       }, 400);
     }
@@ -1115,7 +1106,7 @@
     eRig.classList.add("tekken-lunge-left");
 
     setTimeout(() => {
-      // Otomatis ubah gambar ke file _hit.png saat pemain terkena serangan
+      // Otomatis ubah gambar ke file _hit.png saat terkena serangan
       pImg.src = skin.id + "_hit.png";
 
       let eDmg = Math.floor(battle.eAtk * (0.9 + Math.random() * 0.25));
@@ -1149,7 +1140,7 @@
       setTimeout(() => {
         eRig.classList.remove("tekken-lunge-left");
         pRig.classList.remove("tekken-knockback");
-        pImg.src = skin.img; // Kembalikan ke gambar normal (idle) setelah hit selesai
+        pImg.src = skin.img;
 
         if (battle.pHp <= 0) {
           if (battle.enemyTimer) clearInterval(battle.enemyTimer);
@@ -1163,7 +1154,7 @@
   }
 
   // =========================================================================
-  // 8. WARDROBE, GACHA, GOOGLE SIGN-IN & GOOGLE SHEETS SYNC
+  // 8. WARDROBE, GACHA & GOOGLE SHEETS
   // =========================================================================
   function renderWardrobe() {
     const grid = document.getElementById("skin-grid");
@@ -1236,7 +1227,6 @@
     return (player.level * 160) + (player.unlockedSkins.length * 320);
   }
 
-  // Google Sign-In Callback
   function handleGoogleSignIn(response) {
     try {
       const base64Url = response.credential.split('.')[1];
@@ -1344,7 +1334,6 @@
     btn.classList.add("active");
   }
 
-  // Mulai game saat halaman dimuat
   initGame();
 </script>
 </body>
