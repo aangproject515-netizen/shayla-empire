@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.0</title>
+  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.1</title>
+  <!-- Google Identity Services untuk Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
       --pink-bg: #ffe4f0;
@@ -22,41 +24,44 @@
     }
 
     header {
-      background: rgba(255, 240, 247, 0.92); backdrop-filter: blur(10px);
-      padding: 12px 22px; display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255, 240, 247, 0.95); backdrop-filter: blur(12px);
+      padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;
       border-bottom: 3px solid var(--pink-pastel); position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.15);
+      box-shadow: 0 4px 20px rgba(255, 105, 180, 0.18);
     }
     .brand { font-size: 1.25rem; font-weight: 900; color: var(--pink-deep); text-transform: uppercase; letter-spacing: 1px; }
-    .brand span { color: var(--pink-hot); background: var(--yellow-pastel); padding: 3px 10px; border-radius: 12px; border: 2px solid var(--pink-pastel); }
-    .stats-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-weight: 800; }
+    .brand span { color: var(--pink-hot); background: var(--yellow-pastel); padding: 4px 12px; border-radius: 14px; border: 2px solid var(--pink-pastel); }
+    .stats-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-weight: 800; }
     .badge {
       background: linear-gradient(135deg, #fff, #ffeef6); padding: 6px 14px; border-radius: 20px;
       border: 2px solid var(--pink-pastel); font-size: 0.85rem; color: var(--pink-deep);
+      box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
     }
 
-    .container { max-width: 1120px; margin: 18px auto; padding: 0 14px; }
-    .tabs { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .container { max-width: 1160px; margin: 20px auto; padding: 0 16px; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
     .tab-btn {
-      padding: 10px 20px; border: 2px solid var(--pink-pastel); border-radius: 14px; cursor: pointer;
-      font-weight: 800; background: rgba(255, 255, 255, 0.88); color: var(--pink-deep); transition: 0.2s;
+      padding: 11px 22px; border: 2px solid var(--pink-pastel); border-radius: 16px; cursor: pointer;
+      font-weight: 800; background: rgba(255, 255, 255, 0.9); color: var(--pink-deep); transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(255, 105, 180, 0.12);
     }
     .tab-btn.active, .tab-btn:hover {
       background: linear-gradient(135deg, var(--pink-hot), #ff85b3);
-      color: #fff; border-color: #fff; transform: translateY(-2px);
+      color: #fff; border-color: #fff; transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(255, 71, 145, 0.35);
     }
     .panel {
-      display: none; background: rgba(255, 255, 255, 0.9); padding: 20px;
-      border-radius: 24px; border: 3px solid var(--pink-pastel);
-      box-shadow: 0 12px 30px rgba(216, 82, 140, 0.15);
+      display: none; background: rgba(255, 255, 255, 0.92); padding: 22px;
+      border-radius: 26px; border: 3px solid var(--pink-pastel);
+      box-shadow: 0 14px 35px rgba(216, 82, 140, 0.18);
     }
     .panel.active { display: block; }
 
-    /* ================= ARENA REALISTIS MAGICAL ALA GENSHIN IMPACT ================= */
+    /* ================= FULL SCREEN ARENA MAGICAL ALA GENSHIN ================= */
     .tekken-stage {
-      position: relative; width: 100%; height: 500px; border-radius: 22px;
+      position: relative; width: 100%; height: 520px; border-radius: 24px;
       overflow: hidden; border: 4px solid #fff;
-      box-shadow: 0 10px 35px rgba(255, 71, 145, 0.35);
+      box-shadow: 0 12px 40px rgba(255, 71, 145, 0.38);
       background-size: cover;
       background-position: center bottom;
       background-repeat: no-repeat;
@@ -64,54 +69,53 @@
       user-select: none;
     }
 
-    /* Efek cahaya matahari magical (God Rays) & vignette lembut */
     .genshin-lighting {
       position: absolute; inset: 0; pointer-events: none; z-index: 2;
       background:
-        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.22), transparent 65%),
-        linear-gradient(180deg, rgba(255, 230, 242, 0.18) 0%, transparent 35%, rgba(45, 10, 35, 0.25) 100%);
+        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.25), transparent 65%),
+        linear-gradient(180deg, rgba(255, 230, 242, 0.2) 0%, transparent 35%, rgba(45, 10, 35, 0.28) 100%);
     }
 
     .ambient-layer {
       position: absolute; inset: 0; pointer-events: none; z-index: 4; overflow: hidden;
     }
     .ambient-item {
-      position: absolute; font-size: 1.5rem; opacity: 0.85;
-      filter: drop-shadow(0 0 8px #fff);
+      position: absolute; font-size: 1.6rem; opacity: 0.88;
+      filter: drop-shadow(0 0 10px #fff);
       animation: floatAmbient 5.5s ease-in-out infinite alternate;
     }
     @keyframes floatAmbient {
       0% { transform: translateY(0px) rotate(0deg) scale(0.9); }
-      100% { transform: translateY(-30px) rotate(25deg) scale(1.15); }
+      100% { transform: translateY(-35px) rotate(25deg) scale(1.18); }
     }
 
     .stage-location-pill {
-      position: absolute; top: 82px; left: 50%; transform: translateX(-50%);
-      z-index: 32; background: rgba(255, 255, 255, 0.9); color: var(--pink-deep);
-      padding: 5px 18px; border-radius: 20px; font-weight: 900; font-size: 0.8rem;
-      border: 2px solid var(--pink-pastel); box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: absolute; top: 85px; left: 50%; transform: translateX(-50%);
+      z-index: 32; background: rgba(255, 255, 255, 0.92); color: var(--pink-deep);
+      padding: 6px 20px; border-radius: 22px; font-weight: 900; font-size: 0.82rem;
+      border: 2px solid var(--pink-pastel); box-shadow: 0 4px 14px rgba(0,0,0,0.18);
       white-space: nowrap;
     }
 
     /* ================= TEKKEN TOP HUD ================= */
     .tekken-hud {
-      position: absolute; top: 12px; left: 16px; right: 16px;
-      display: grid; grid-template-columns: 1fr 78px 1fr; align-items: center;
-      gap: 10px; z-index: 30;
+      position: absolute; top: 14px; left: 18px; right: 18px;
+      display: grid; grid-template-columns: 1fr 82px 1fr; align-items: center;
+      gap: 12px; z-index: 30;
     }
     .hud-side { display: flex; flex-direction: column; gap: 4px; }
     .hud-side.right { align-items: flex-end; text-align: right; }
     .fighter-title {
-      font-weight: 900; font-size: 0.92rem; text-transform: uppercase;
-      color: var(--pink-deep); background: rgba(255, 255, 255, 0.92);
-      padding: 3px 12px; border-radius: 10px; border: 2px solid var(--pink-pastel);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      font-weight: 900; font-size: 0.95rem; text-transform: uppercase;
+      color: var(--pink-deep); background: rgba(255, 255, 255, 0.94);
+      padding: 4px 14px; border-radius: 12px; border: 2px solid var(--pink-pastel);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
     }
     .hp-skew-outer {
-      width: 100%; height: 24px; background: rgba(255, 255, 255, 0.9);
+      width: 100%; height: 26px; background: rgba(255, 255, 255, 0.92);
       border: 2px solid var(--pink-hot); transform: skewX(-18deg);
-      overflow: hidden; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      border-radius: 4px;
+      overflow: hidden; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+      border-radius: 6px;
     }
     .hud-side.right .hp-skew-outer { transform: skewX(18deg); border-color: #9c27b0; }
     .hp-fill-p {
@@ -126,11 +130,11 @@
     }
     .hp-num {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 0.78rem; font-weight: 900; color: #3d0c28; text-shadow: 0 0 4px #fff;
+      font-size: 0.8rem; font-weight: 900; color: #3d0c28; text-shadow: 0 0 5px #fff;
     }
     .rage-bar-wrap {
-      width: 75%; height: 11px; background: rgba(255, 255, 255, 0.9);
-      border: 2px solid var(--pink-hot); transform: skewX(-18deg); overflow: hidden; border-radius: 4px;
+      width: 75%; height: 12px; background: rgba(255, 255, 255, 0.92);
+      border: 2px solid var(--pink-hot); transform: skewX(-18deg); overflow: hidden; border-radius: 5px;
     }
     .rage-fill {
       height: 100%; width: 0%;
@@ -138,245 +142,246 @@
       transition: width 0.25s;
     }
     .hud-timer {
-      width: 72px; height: 60px; margin: 0 auto;
+      width: 76px; height: 64px; margin: 0 auto;
       background: linear-gradient(135deg, #fff5ba, #ffd6e8);
-      border: 3px solid var(--pink-hot); border-radius: 16px;
+      border: 3px solid var(--pink-hot); border-radius: 18px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 1.5rem; color: var(--pink-deep);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-weight: 900; font-size: 1.55rem; color: var(--pink-deep);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.22);
     }
-    .hud-timer small { font-size: 0.55rem; color: var(--pink-hot); }
+    .hud-timer small { font-size: 0.58rem; color: var(--pink-hot); }
 
     .combo-box {
-      position: absolute; top: 120px; left: 25px; z-index: 35;
+      position: absolute; top: 125px; left: 28px; z-index: 35;
       font-style: italic; font-weight: 900; color: var(--pink-hot);
-      text-shadow: 2px 2px 0 #fff, 0 4px 12px rgba(0,0,0,0.4);
+      text-shadow: 2px 2px 0 #fff, 0 4px 14px rgba(0,0,0,0.45);
       opacity: 0; transform: scale(0.5); transition: 0.18s; pointer-events: none;
     }
     .combo-box.show { opacity: 1; transform: scale(1); }
-    .combo-num { font-size: 2.8rem; line-height: 1; }
-    .combo-lbl { font-size: 1rem; letter-spacing: 2px; color: var(--pink-deep); background: var(--yellow-pastel); padding: 2px 8px; border-radius: 8px; }
+    .combo-num { font-size: 3rem; line-height: 1; }
+    .combo-lbl { font-size: 1.05rem; letter-spacing: 2px; color: var(--pink-deep); background: var(--yellow-pastel); padding: 3px 10px; border-radius: 10px; }
 
-    /* ================= KARAKTER PNG TRANSPARAN & MONSTER DI LANTAI ARENA ================= */
+    /* ================= KARAKTER & MUSUH DI ARENA ================= */
     .fighters-stage-area {
-      position: absolute; inset: 105px 40px 26px 40px;
+      position: absolute; inset: 110px 45px 28px 45px;
       display: flex; justify-content: space-between; align-items: flex-end;
       z-index: 20; pointer-events: none;
     }
 
     .rig-container {
-      position: relative; width: 230px; height: 325px;
+      position: relative; width: 240px; height: 335px;
       display: flex; align-items: flex-end; justify-content: center;
-      transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
+      transition: transform 0.28s cubic-bezier(0.15, 0.85, 0.35, 1.1);
     }
 
     .ground-shadow {
-      position: absolute; bottom: -4px; width: 155px; height: 26px;
-      background: radial-gradient(ellipse, rgba(25, 5, 20, 0.55) 0%, transparent 72%);
+      position: absolute; bottom: -4px; width: 165px; height: 28px;
+      background: radial-gradient(ellipse, rgba(25, 5, 20, 0.6) 0%, transparent 72%);
       border-radius: 50%; z-index: 1;
     }
 
     .fighter-aura {
-      position: absolute; bottom: 10px; width: 190px; height: 280px;
-      border-radius: 50%; filter: blur(22px); opacity: 0.55; z-index: 2;
+      position: absolute; bottom: 10px; width: 200px; height: 290px;
+      border-radius: 50%; filter: blur(24px); opacity: 0.58; z-index: 2;
       animation: auraPulse 1.8s ease-in-out infinite alternate;
     }
     @keyframes auraPulse {
       0% { transform: scale(0.95); opacity: 0.45; }
-      100% { transform: scale(1.08); opacity: 0.75; }
+      100% { transform: scale(1.08); opacity: 0.78; }
     }
 
     .chibi-body-wrap {
-      position: relative; width: 215px; height: 305px; z-index: 5;
+      position: relative; width: 225px; height: 315px; z-index: 5;
       animation: tekkenStance 1.6s ease-in-out infinite;
       transform-origin: bottom center;
       display: flex; align-items: flex-end; justify-content: center;
     }
     @keyframes tekkenStance {
       0%, 100% { transform: translateY(0px) rotate(-1deg) scaleY(1); }
-      50% { transform: translateY(-9px) rotate(1.5deg) scaleY(1.02); }
+      50% { transform: translateY(-10px) rotate(1.5deg) scaleY(1.02); }
     }
 
-    /* Gambar PNG Transparan Asli tanpa pemotongan kotak */
-    .transparent-char-img {
+    .transparent-char-img, .boss-char-img {
       width: 100%; height: 100%; object-fit: contain; object-position: bottom center;
-      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
     }
-
-    /* Untuk gambar monster JPG berlatar putih agar menyatu halus dengan cahaya arena */
     .boss-char-img {
-      width: 100%; height: 100%; object-fit: contain; object-position: bottom center;
-      border-radius: 28px;
+      border-radius: 30px;
       -webkit-mask-image: radial-gradient(ellipse 82% 88% at 50% 52%, #000 72%, transparent 98%);
       mask-image: radial-gradient(ellipse 82% 88% at 50% 52%, #000 72%, transparent 98%);
-      filter: drop-shadow(0 6px 16px rgba(156, 39, 176, 0.45));
+      filter: drop-shadow(0 8px 18px rgba(156, 39, 176, 0.5));
     }
 
-    /* EKSPRESI WAJAH SHAYLA & SHELLY */
+    /* EKSPRESI WAJAH */
     .face-expression {
       position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
       z-index: 12; pointer-events: none;
       opacity: 0; transition: opacity 0.15s, transform 0.15s;
     }
-    .face-expression.active { opacity: 1; transform: translateX(-50%) scale(1.15); }
+    .face-expression.active { opacity: 1; transform: translateX(-50%) scale(1.18); }
     .expr-badge {
-      background: rgba(255, 255, 255, 0.95); color: var(--pink-deep);
-      border: 2px solid var(--pink-hot); border-radius: 20px; padding: 3px 12px;
-      font-size: 0.95rem; font-weight: 900; box-shadow: 0 4px 12px rgba(255, 71, 145, 0.45);
+      background: rgba(255, 255, 255, 0.96); color: var(--pink-deep);
+      border: 2px solid var(--pink-hot); border-radius: 22px; padding: 4px 14px;
+      font-size: 0.98rem; font-weight: 900; box-shadow: 0 4px 14px rgba(255, 71, 145, 0.5);
       white-space: nowrap;
     }
 
-    /* LENGAN SENJATA ANIMASI */
+    /* LENGAN SENJATA ANIMASI MENGHADAP KANAN */
     .puppet-arm {
-      position: absolute; top: 118px; width: 52px; height: 78px;
+      position: absolute; top: 122px; width: 55px; height: 82px;
       z-index: 15; pointer-events: none; transform-origin: top center;
     }
-    .puppet-arm.left-arm { left: 12px; animation: armIdleLeft 1.6s ease-in-out infinite; }
-    .puppet-arm.right-arm { right: 4px; animation: armIdleRight 1.6s ease-in-out infinite; }
+    /* Karena sekarang karakter menghadap ke kanan ke arah musuh, lengan kanan berada di depan (kanan) */
+    .puppet-arm.left-arm { left: 8px; animation: armIdleLeft 1.6s ease-in-out infinite; }
+    .puppet-arm.right-arm { right: 10px; animation: armIdleRight 1.6s ease-in-out infinite; }
     @keyframes armIdleLeft {
-      0%, 100% { transform: rotate(12deg) translateY(0); }
-      50% { transform: rotate(22deg) translateY(-5px); }
+      0%, 100% { transform: rotate(14deg) translateY(0); }
+      50% { transform: rotate(24deg) translateY(-5px); }
     }
     @keyframes armIdleRight {
-      0%, 100% { transform: rotate(-18deg) translateY(0); }
-      50% { transform: rotate(-30deg) translateY(-6px); }
+      0%, 100% { transform: rotate(-16deg) translateY(0); }
+      50% { transform: rotate(-28deg) translateY(-6px); }
     }
 
-    .swing-attack .right-arm { animation: punchSwing 0.45s cubic-bezier(0.1, 0.9, 0.2, 1) !important; }
-    .swing-attack .left-arm { animation: leftGuardSwing 0.45s ease !important; }
-    @keyframes punchSwing {
-      0% { transform: rotate(-20deg) scale(1); }
-      35% { transform: rotate(-115deg) translateX(25px) scale(1.35); filter: drop-shadow(0 0 15px #fff); }
-      70% { transform: rotate(-65deg) translateX(15px) scale(1.2); }
-      100% { transform: rotate(-18deg) scale(1); }
+    /* PUNCH KE KANAN (MENYERANG MUSUH) */
+    .swing-attack .right-arm { animation: punchSwingRight 0.42s cubic-bezier(0.1, 0.9, 0.2, 1) !important; }
+    .swing-attack .left-arm { animation: leftGuardSwing 0.42s ease !important; }
+    @keyframes punchSwingRight {
+      0% { transform: rotate(-16deg) scale(1); }
+      30% { transform: rotate(65deg) translateX(35px) scale(1.4); filter: drop-shadow(0 0 18px #fff); }
+      65% { transform: rotate(35deg) translateX(20px) scale(1.25); }
+      100% { transform: rotate(-16deg) scale(1); }
     }
     @keyframes leftGuardSwing {
-      0%, 100% { transform: rotate(12deg); }
-      50% { transform: rotate(55deg) translateY(-10px); }
+      0%, 100% { transform: rotate(14deg); }
+      50% { transform: rotate(-15deg) translateY(-10px); }
     }
 
-    .tekken-lunge-right { transform: translateX(340px) scale(1.12) !important; }
-    .tekken-lunge-left { transform: translateX(-340px) scale(1.12) !important; }
-    .tekken-knockback { animation: knockbackHit 0.45s ease !important; }
-    @keyframes knockbackHit {
-      0%, 100% { transform: translateX(0); filter: none; }
-      25% { transform: translateX(28px) rotate(8deg) scale(0.94); filter: brightness(1.4) drop-shadow(0 0 20px var(--pink-hot)); }
-      60% { transform: translateX(-12px) rotate(-4deg); }
+    /* EFEK TERPANTAIL (KNOCKBACK DRAMATIS KE KANAN & KIRI) */
+    .tekken-lunge-right { transform: translateX(310px) scale(1.12) !important; }
+    .tekken-lunge-left { transform: translateX(-310px) scale(1.12) !important; }
+    .tekken-knockback { animation: knockbackHitDramatis 0.48s ease !important; }
+    @keyframes knockbackHitDramatis {
+      0%, 100% { transform: translateX(0) rotate(0deg) scale(1); filter: none; }
+      20% { transform: translateX(38px) rotate(12deg) scale(0.92); filter: brightness(1.6) drop-shadow(0 0 25px var(--pink-hot)); }
+      55% { transform: translateX(-18px) rotate(-6deg) scale(1.05); }
     }
 
-    /* FX LAYER */
+    /* FX LAYER & PROJEKTIL */
     .fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 40; overflow: hidden; }
     .tekken-announcer {
       position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%) scale(0);
-      font-size: 3.1rem; font-weight: 900; font-style: italic; color: var(--pink-hot);
-      text-shadow: 3px 3px 0 #fff, 0 0 25px rgba(255, 71, 145, 0.8);
+      font-size: 3.2rem; font-weight: 900; font-style: italic; color: var(--pink-hot);
+      text-shadow: 3px 3px 0 #fff, 0 0 28px rgba(255, 71, 145, 0.85);
       z-index: 60; pointer-events: none; white-space: nowrap;
     }
     .tekken-announcer.show { animation: announcePop 1.1s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards; }
     @keyframes announcePop {
       0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-      30%, 70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+      30%, 70% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.55); opacity: 0; }
     }
 
     .projectile {
-      position: absolute; font-size: 3.5rem; top: 54%; left: 26%;
+      position: absolute; font-size: 3.8rem; top: 52%; left: 24%;
       transform: translate(-50%, -50%);
-      filter: drop-shadow(0 0 18px var(--pink-hot));
-      animation: projFlyRight 0.45s linear forwards;
+      filter: drop-shadow(0 0 20px var(--pink-hot));
+      animation: projFlyRight 0.42s linear forwards;
     }
     @keyframes projFlyRight {
-      0% { left: 26%; transform: translate(-50%, -50%) scale(0.6) rotate(0deg); opacity: 1; }
-      85% { left: 75%; transform: translate(-50%, -50%) scale(1.55) rotate(360deg); opacity: 1; }
-      100% { left: 78%; transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+      0% { left: 24%; transform: translate(-50%, -50%) scale(0.6) rotate(0deg); opacity: 1; }
+      85% { left: 76%; transform: translate(-50%, -50%) scale(1.6) rotate(360deg); opacity: 1; }
+      100% { left: 80%; transform: translate(-50%, -50%) scale(2.3); opacity: 0; }
     }
 
     .dmg-popup {
-      position: absolute; font-weight: 900; font-size: 1.9rem; font-style: italic;
-      text-shadow: 2px 2px 0 #fff, 0 2px 10px rgba(184, 37, 101, 0.6);
+      position: absolute; font-weight: 900; font-size: 2rem; font-style: italic;
+      text-shadow: 2px 2px 0 #fff, 0 3px 12px rgba(184, 37, 101, 0.65);
       pointer-events: none; z-index: 55;
       animation: dmgPopAnim 0.9s ease-out forwards;
     }
     @keyframes dmgPopAnim {
       0% { transform: translate(-50%, 0) scale(0.5); opacity: 1; }
-      35% { transform: translate(-50%, -30px) scale(1.3); opacity: 1; }
-      100% { transform: translate(-50%, -70px) scale(1); opacity: 0; }
+      35% { transform: translate(-50%, -35px) scale(1.35); opacity: 1; }
+      100% { transform: translate(-50%, -75px) scale(1); opacity: 0; }
     }
 
     .particle-burst {
-      position: absolute; font-size: 2rem; pointer-events: none;
+      position: absolute; font-size: 2.1rem; pointer-events: none;
       animation: burstOut 0.65s ease-out forwards;
     }
     @keyframes burstOut {
       0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
-      100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(45deg); opacity: 0; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(45deg); opacity: 0; }
     }
 
-    /* CONTROLS & LOG */
+    /* STATUS & TOMBOL RAMAH/FRIENDLY */
     .status-strip {
       display: flex; justify-content: space-between; align-items: center;
-      margin-top: 12px; padding: 10px 16px;
+      margin-top: 14px; padding: 12px 18px;
       background: linear-gradient(90deg, #fff0f6, #fff9db, #f3e8ff);
-      border: 2px solid var(--pink-pastel); border-radius: 14px; font-size: 0.88rem;
+      border: 2px solid var(--pink-pastel); border-radius: 16px; font-size: 0.9rem;
     }
-    .status-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .status-badges { display: flex; gap: 8px; flex-wrap: wrap; }
     .status-pill {
-      padding: 3px 10px; border-radius: 12px; background: #fff;
-      border: 2px solid var(--pink-hot); color: var(--pink-deep); font-size: 0.78rem; font-weight: 800;
+      padding: 4px 12px; border-radius: 14px; background: #fff;
+      border: 2px solid var(--pink-hot); color: var(--pink-deep); font-size: 0.8rem; font-weight: 800;
+      box-shadow: 0 2px 6px rgba(255, 71, 145, 0.15);
     }
 
     .battle-controls {
-      margin-top: 14px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      margin-top: 16px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
     }
     .btn-action {
-      padding: 12px 22px; border: 2px solid #fff; border-radius: 16px;
-      font-weight: 900; cursor: pointer; font-size: 0.95rem; transition: 0.18s;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      box-shadow: 0 5px 12px rgba(255, 71, 145, 0.22);
+      padding: 14px 26px; border: 2px solid #fff; border-radius: 18px;
+      font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.2s ease;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      box-shadow: 0 6px 16px rgba(255, 71, 145, 0.28);
     }
-    .btn-action:hover:not(:disabled) { transform: translateY(-3px) scale(1.03); }
+    .btn-action:hover:not(:disabled) { transform: translateY(-4px) scale(1.04); box-shadow: 0 10px 22px rgba(255, 71, 145, 0.4); }
     .btn-atk { background: linear-gradient(135deg, #ff5e9e, #ff2a7f); color: #fff; }
     .btn-skill { background: linear-gradient(135deg, #b388ff, #7c4dff); color: #fff; }
     .btn-ult { background: linear-gradient(135deg, #ffe57f, #ffab00); color: #591c42; border-color: var(--pink-hot); }
     .btn-heal { background: linear-gradient(135deg, #80cbc4, #00bfa5); color: #fff; }
     .btn-cloud { background: linear-gradient(135deg, #ff9eb5, #ff5277); color: #fff; }
-    .btn-action:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.4); }
+    .btn-action:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.4); box-shadow: none; }
 
     .battle-log {
-      margin-top: 14px; background: #fff8fb; color: var(--text-main);
-      padding: 12px 16px; border-radius: 16px; height: 110px; overflow-y: auto;
-      font-size: 0.9rem; border: 2px solid var(--pink-pastel); line-height: 1.55;
+      margin-top: 16px; background: #fff8fb; color: var(--text-main);
+      padding: 14px 18px; border-radius: 18px; height: 120px; overflow-y: auto;
+      font-size: 0.92rem; border: 2px solid var(--pink-pastel); line-height: 1.6;
     }
 
     /* WARDROBE GRID */
     .skin-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px;
     }
     .skin-card {
       background: linear-gradient(180deg, #ffffff 0%, #fff2f8 100%);
-      border-radius: 18px; padding: 14px; text-align: center;
+      border-radius: 20px; padding: 16px; text-align: center;
       border: 3px solid var(--pink-pastel); transition: 0.25s;
+      box-shadow: 0 6px 18px rgba(255, 105, 180, 0.12);
     }
     .skin-card.equipped {
       border-color: var(--pink-hot);
       background: linear-gradient(180deg, #fff9db 0%, #ffe0ef 100%);
-      box-shadow: 0 8px 20px rgba(255, 71, 145, 0.28);
+      box-shadow: 0 10px 25px rgba(255, 71, 145, 0.32);
     }
     .skin-card.locked { filter: grayscale(0.8); opacity: 0.65; }
-    .skin-card img { width: 100%; height: 220px; object-fit: contain; background: radial-gradient(circle, #fff0f6, #f3e8ff); border-radius: 14px; padding: 6px; }
+    .skin-card img { width: 100%; height: 230px; object-fit: contain; background: radial-gradient(circle, #fff0f6, #f3e8ff); border-radius: 16px; padding: 6px; }
     .role-tag {
-      display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem;
-      font-weight: 800; background: var(--pink-pastel); color: var(--pink-deep); margin: 6px 0;
+      display: inline-block; padding: 5px 14px; border-radius: 14px; font-size: 0.78rem;
+      font-weight: 800; background: var(--pink-pastel); color: var(--pink-deep); margin: 8px 0;
     }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; border-radius: 14px; overflow: hidden; }
-    th, td { padding: 12px; border-bottom: 1px solid var(--pink-bg); text-align: left; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+    th, td { padding: 14px; border-bottom: 1px solid var(--pink-bg); text-align: left; }
     th { background: var(--pink-pastel); color: var(--pink-deep); }
 
     @media (max-width: 760px) {
-      .tekken-stage { height: 430px; }
-      .rig-container { width: 155px; height: 245px; }
-      .chibi-body-wrap { width: 145px; height: 225px; }
+      .tekken-stage { height: 440px; }
+      .rig-container { width: 160px; height: 250px; }
+      .chibi-body-wrap { width: 150px; height: 230px; }
       .tekken-lunge-right { transform: translateX(130px) scale(1.08) !important; }
       .tekken-lunge-left { transform: translateX(-130px) scale(1.08) !important; }
     }
@@ -391,7 +396,7 @@
     <span class="badge" id="ui-lv">⭐ Lv. 1</span>
     <span class="badge" id="ui-gems">💎 200 Gems</span>
     <span class="badge" id="ui-stage">🏰 Stage 1</span>
-    <button class="btn-action btn-cloud" style="padding:6px 14px; font-size:0.8rem;" onclick="saveToGoogleSheets()">☁️ Cloud Save</button>
+    <button class="btn-action btn-cloud" style="padding:8px 16px; font-size:0.82rem;" onclick="saveToGoogleSheets()">☁️ Cloud Save</button>
   </div>
 </header>
 
@@ -400,7 +405,7 @@
     <button class="tab-btn active" onclick="switchTab('battle', this)">🥊 Magical Tekken Arena</button>
     <button class="tab-btn" onclick="switchTab('wardrobe', this)">👗 Pilih Fighter & Dunia (9 Chibi)</button>
     <button class="tab-btn" onclick="switchTab('gacha', this)">🎰 Gacha Runway (100 💎)</button>
-    <button class="tab-btn" onclick="switchTab('cloud', this)">🏆 Google Sheets & Ranking</button>
+    <button class="tab-btn" onclick="switchTab('cloud', this)">🏆 Google Sign-In & Ranking</button>
   </div>
 
   <!-- TAB 1: BATTLE ARENA -->
@@ -423,7 +428,7 @@
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             <div class="rage-bar-wrap"><div class="rage-fill" id="p-ult-bar"></div></div>
-            <small id="p-ult-text" style="color:var(--pink-deep); background:rgba(255,255,255,0.85); padding:1px 6px; border-radius:6px; font-weight:900; font-size:0.75rem;">RAGE 0%</small>
+            <small id="p-ult-text" style="color:var(--pink-deep); background:rgba(255,255,255,0.9); padding:1px 8px; border-radius:6px; font-weight:900; font-size:0.75rem;">RAGE 0%</small>
           </div>
         </div>
 
@@ -438,7 +443,7 @@
             <div class="hp-fill-e" id="e-hp-bar"></div>
             <div class="hp-num" id="e-hp-text">500 / 500</div>
           </div>
-          <small id="e-title-sub" style="color:var(--pink-deep); background:rgba(255,255,255,0.85); padding:1px 8px; border-radius:6px; font-weight:900; font-size:0.75rem;">STAGE 1 BOSS FIGHTER</small>
+          <small id="e-title-sub" style="color:var(--pink-deep); background:rgba(255,255,255,0.9); padding:1px 8px; border-radius:6px; font-weight:900; font-size:0.75rem;">STAGE 1 BOSS FIGHTER</small>
         </div>
       </div>
 
@@ -448,9 +453,9 @@
         <div class="combo-lbl">HIT COMBO!</div>
       </div>
 
-      <!-- FIGHTERS ON THE ARENA -->
+      <!-- FIGHTERS & BOSS DI ARENA (MENGHADAP KANAN KE ARAH MUSUH) -->
       <div class="fighters-stage-area">
-        <!-- SHAYLA / SHELLY -->
+        <!-- PLAYER (MENHADAP KANAN) -->
         <div class="rig-container" id="p-rig">
           <div class="ground-shadow"></div>
           <div class="fighter-aura" id="p-aura"></div>
@@ -459,17 +464,18 @@
             <div class="face-expression" id="p-expr">
               <span class="expr-badge" id="p-expr-text">😠⚡ FIERCE!</span>
             </div>
-            <img id="p-img" class="transparent-char-img" src="shayla_mosaic.png" alt="Shayla"/>
+            <!-- Gambar di-flip horizontal (scaleX(1)) agar menghadap ke kanan ke musuh -->
+            <img id="p-img" class="transparent-char-img" src="shayla_mosaic.png" alt="Shayla" style="transform: scaleX(1);" />
             <div class="puppet-arm left-arm" id="p-arm-l"></div>
             <div class="puppet-arm right-arm" id="p-arm-r"></div>
           </div>
         </div>
 
-        <!-- BOSS MONSTER -->
+        <!-- BOSS MONSTER DI KANAN -->
         <div class="rig-container" id="e-rig">
           <div class="ground-shadow"></div>
           <div class="fighter-aura" id="e-aura"></div>
-          <div class="chibi-body-wrap" id="e-monster-graphic"></div>
+          <div class="chibi-body-wrap" id="e-monster-graphic" style="transform: scaleX(-1);"></div>
         </div>
       </div>
     </div>
@@ -483,7 +489,7 @@
       <div class="status-badges" id="e-statuses"></div>
     </div>
 
-    <!-- TOMBOL KOMBO PERTARUNGAN -->
+    <!-- TOMBOL KOMBO PERTARUNGAN (FRIENDLY & MODERN) -->
     <div class="battle-controls">
       <button class="btn-action btn-atk" id="btn-atk" onclick="playerAction('attack')">👊 Glam Combo Strike</button>
       <button class="btn-action btn-skill" id="btn-skill" onclick="playerAction('skill')">✨ <span id="lbl-skill">Signature Skill</span> (CD: <span id="cd-skill">0</span>)</button>
@@ -492,7 +498,7 @@
     </div>
 
     <div class="battle-log" id="battle-log">
-      <div>🌸 <b>MAGICAL TEKKEN ARENA!</b> Ganti fighter untuk berpindah ke dunia fantasi berbeda!</div>
+      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.1!</b> Musuh menyerang otomatis secara kontinu jika Anda diam! Pilih Fighter di Tab ke-2.</div>
     </div>
   </div>
 
@@ -507,15 +513,25 @@
   <div id="tab-gacha" class="panel" style="text-align:center;">
     <h2>🎰 Runway Starlight Gacha</h2>
     <p>Gunakan <b>100 Pink Gems 💎</b> untuk membuka karakter & dunia baru bagi Shayla atau Shelly!</p>
-    <button class="btn-action btn-atk" style="font-size:1.2rem; padding:15px 30px;" onclick="pullGacha()">✨ Summon Fighter (100 💎)</button>
+    <button class="btn-action btn-atk" style="font-size:1.15rem; padding:16px 32px;" onclick="pullGacha()">✨ Summon Fighter (100 💎)</button>
     <div id="gacha-result" style="margin-top:25px;"></div>
   </div>
 
-  <!-- TAB 4: GOOGLE SHEETS -->
+  <!-- TAB 4: GOOGLE SHEETS & GOOGLE SIGN IN -->
   <div id="tab-cloud" class="panel">
-    <h2>☁️ Database Google Sheets & Global Ranking</h2>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
-      <input type="text" id="input-username" placeholder="Masukkan Username kamu..." style="padding:12px; border-radius:12px; border:2px solid var(--pink-hot); background:#fff; color:var(--text-main); flex:1; font-weight:bold;" />
+    <h2>☁️ Google Sign-In & Database Google Sheets</h2>
+    <p>Masuk dengan akun Google Anda untuk menyimpan progress ke Google Sheets dan tampil di Leaderboard Global!</p>
+    
+    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px;">
+      <!-- Google Sign In Button Container -->
+      <div id="g_id_onload"
+           data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+           data-callback="handleGoogleSignIn"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="sign_in_with" data-size="large"></div>
+
+      <input type="text" id="input-username" placeholder="Atau ketik Username kamu..." style="padding:13px 18px; border-radius:16px; border:2px solid var(--pink-hot); background:#fff; color:var(--text-main); flex:1; font-weight:bold; font-size:0.95rem;" />
       <button class="btn-action btn-heal" onclick="loadFromGoogleSheets()">📥 Load dari Sheet</button>
       <button class="btn-action btn-cloud" onclick="saveToGoogleSheets()">📤 Save ke Sheet</button>
       <button class="btn-action btn-skill" onclick="fetchLeaderboard()">🔄 Refresh Ranking</button>
@@ -536,9 +552,9 @@
 
 <script>
   // =========================================================================
-  // 1. URL WEB APP GOOGLE APPS SCRIPT KAMU
+  // 1. URL WEB APP GOOGLE APPS SCRIPT ANDA
   // =========================================================================
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyOf2o0gPxNQ3PzSdRLhN8Adx5D65Ps0qcwd4SVj20gZbb8IokIODoEj5R57vfHR0AC/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycby-Tbs6EhzZPV8yaumENlrJailpZN1i2WkZQ_rSzjIRfMGbKUmVbxSlaNpXCFuuSiEr/exec";
 
   // =========================================================================
   // 2. SOUND EFFECTS SYNTHESIZER
@@ -555,30 +571,30 @@
 
       if (type === 'atk') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.setValueAtTime(320, now);
         osc.frequency.exponentialRampToValueAtTime(110, now + 0.16);
-        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.setValueAtTime(0.28, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.16);
         osc.start(now); osc.stop(now + 0.16);
       } else if (type === 'skill') {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(440, now);
-        osc.frequency.exponentialRampToValueAtTime(920, now + 0.35);
-        gain.gain.setValueAtTime(0.3, now);
+        osc.frequency.exponentialRampToValueAtTime(940, now + 0.35);
+        gain.gain.setValueAtTime(0.32, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
         osc.start(now); osc.stop(now + 0.35);
       } else if (type === 'ult') {
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(180, now);
-        osc.frequency.exponentialRampToValueAtTime(980, now + 0.65);
-        gain.gain.setValueAtTime(0.32, now);
+        osc.frequency.exponentialRampToValueAtTime(1020, now + 0.65);
+        gain.gain.setValueAtTime(0.35, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.65);
         osc.start(now); osc.stop(now + 0.65);
       } else if (type === 'heal') {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(523, now);
         osc.frequency.setValueAtTime(784, now + 0.22);
-        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.setValueAtTime(0.28, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.38);
         osc.start(now); osc.stop(now + 0.38);
       }
@@ -586,167 +602,83 @@
   }
 
   // =========================================================================
-  // 3. DATABASE 9 FIGHTER (.PNG TRANSPARAN) + 9 LATAR GENSHIN MAGICAL
+  // 3. DATABASE 9 FIGHTER & 5 BOSS MONSTER
   // =========================================================================
   const SKINS_DB = [
     {
-      id: "shayla_mosaic",
-      name: "Shayla - Mosaic Empress",
-      img: "shayla_mosaic.png",
-      bgImg: "bg_mosaic.jpg",
-      role: "Prism Shielder",
-      hp: 580, atk: 72,
-      skillName: "Prism Mosaic Nova",
-      ultName: "DIAMOND CATHEDRAL FINISH",
-      skillMult: 2.1, bonusHeal: 140,
-      projIcon: "💎", partIcons: ["💎", "✨", "🌸"], auraColor: "#ff9ec6",
-      gloveColor: "#ffd700", weaponSvg: "💎",
-      atkExpr: "😠💎 PRISM SLASH!", skillExpr: "😤✨ MOSAIC POWER!",
-      effectType: "shield", effectDesc: "Perisai Kristal (+150 Shield)",
-      stageName: "🏰 Crystal Mosaic Cathedral Sanctuary",
+      id: "shayla_mosaic", name: "Shayla - Mosaic Empress", img: "shayla_mosaic.png", bgImg: "bg_mosaic.jpg",
+      role: "Prism Shielder", hp: 580, atk: 72, skillName: "Prism Mosaic Nova", ultName: "DIAMOND CATHEDRAL FINISH",
+      skillMult: 2.1, bonusHeal: 140, projIcon: "💎", partIcons: ["💎", "✨", "🌸"], auraColor: "#ff9ec6",
+      gloveColor: "#ffd700", weaponSvg: "💎", atkExpr: "😠💎 PRISM SLASH!", skillExpr: "😤✨ MOSAIC POWER!",
+      effectType: "shield", effectDesc: "Perisai Kristal (+150 Shield)", stageName: "🏰 Crystal Mosaic Cathedral Sanctuary",
       ambientIcons: ["💎", "🌸", "✨", "🦋"]
     },
     {
-      id: "shayla_gold",
-      name: "Shayla - Golden Chain Goddess",
-      img: "shayla_gold.png",
-      bgImg: "bg_gold.jpg",
-      role: "Chain Controller",
-      hp: 550, atk: 85,
-      skillName: "Golden Chain Bind",
-      ultName: "EMPRESS CHAIN PRISON",
-      skillMult: 2.3, bonusHeal: 110,
-      projIcon: "⛓️", partIcons: ["⛓️", "🪙", "✨"], auraColor: "#ffe082",
-      gloveColor: "#ffab00", weaponSvg: "⛓️",
-      atkExpr: "😠⛓️ CHAIN WHIP!", skillExpr: "😈🔒 LOCKDOWN!",
-      effectType: "stun", effectDesc: "Mengikat & Stun Musuh 1 Giliran",
-      stageName: "👑 Grand Golden Celestial Ballroom",
+      id: "shayla_gold", name: "Shayla - Golden Chain Goddess", img: "shayla_gold.png", bgImg: "bg_gold.jpg",
+      role: "Chain Controller", hp: 550, atk: 85, skillName: "Golden Chain Bind", ultName: "EMPRESS CHAIN PRISON",
+      skillMult: 2.3, bonusHeal: 110, projIcon: "⛓️", partIcons: ["⛓️", "🪙", "✨"], auraColor: "#ffe082",
+      gloveColor: "#ffab00", weaponSvg: "⛓️", atkExpr: "😠⛓️ CHAIN WHIP!", skillExpr: "😈🔒 LOCKDOWN!",
+      effectType: "stun", effectDesc: "Mengikat & Stun Musuh 1 Giliran", stageName: "👑 Grand Golden Celestial Ballroom",
       ambientIcons: ["✨", "👑", "🪙", "🌸"]
     },
     {
-      id: "shayla_yellow",
-      name: "Shayla - Sunburst Corset",
-      img: "shayla_yellow.png",
-      bgImg: "bg_yellow.jpg",
-      role: "Solar Striker",
-      hp: 510, atk: 95,
-      skillName: "Sunbeam Ribbon Slash",
-      ultName: "SUPERNOVA RUNWAY FLARE",
-      skillMult: 2.4, bonusHeal: 100,
-      projIcon: "☀️", partIcons: ["☀️", "🌻", "✨"], auraColor: "#fff176",
-      gloveColor: "#ffea00", weaponSvg: "☀️",
-      atkExpr: "😡☀️ SOLAR STRIKE!", skillExpr: "🔥😆 BURN BRIGHT!",
-      effectType: "burn", effectDesc: "Membakar Musuh (Burn 3 Giliran)",
-      stageName: "🌻 Sunburst Windmill Flower Meadow",
+      id: "shayla_yellow", name: "Shayla - Sunburst Corset", img: "shayla_yellow.png", bgImg: "bg_yellow.jpg",
+      role: "Solar Striker", hp: 510, atk: 95, skillName: "Sunbeam Ribbon Slash", ultName: "SUPERNOVA RUNWAY FLARE",
+      skillMult: 2.4, bonusHeal: 100, projIcon: "☀️", partIcons: ["☀️", "🌻", "✨"], auraColor: "#fff176",
+      gloveColor: "#ffea00", weaponSvg: "☀️", atkExpr: "😡☀️ SOLAR STRIKE!", skillExpr: "🔥😆 BURN BRIGHT!",
+      effectType: "burn", effectDesc: "Membakar Musuh (Burn 3 Giliran)", stageName: "🌻 Sunburst Windmill Flower Meadow",
       ambientIcons: ["☀️", "🌻", "🌼", "✨"]
     },
     {
-      id: "shayla_ocean",
-      name: "Shayla - Ocean Pearl Siren",
-      img: "shayla_ocean.png",
-      bgImg: "bg_ocean.jpg",
-      role: "Hydro Healer",
-      hp: 650, atk: 78,
-      skillName: "Tidal Pearl Vortex",
-      ultName: "ATLANTIS TSUNAMI ENCORE",
-      skillMult: 2.0, bonusHeal: 250,
-      projIcon: "🌊", partIcons: ["🫧", "🐚", "💧"], auraColor: "#84ffff",
-      gloveColor: "#00e5ff", weaponSvg: "🔱",
-      atkExpr: "😠🌊 AQUA WAVE!", skillExpr: "🧜‍♀️💙 SIREN BLESS!",
-      effectType: "regen", effectDesc: "Menyerang & Pulihkan +160 HP",
-      stageName: "🐚 Underwater Mermaid Pearl Lagoon",
+      id: "shayla_ocean", name: "Shayla - Ocean Pearl Siren", img: "shayla_ocean.png", bgImg: "bg_ocean.jpg",
+      role: "Hydro Healer", hp: 650, atk: 78, skillName: "Tidal Pearl Vortex", ultName: "ATLANTIS TSUNAMI ENCORE",
+      skillMult: 2.0, bonusHeal: 250, projIcon: "🌊", partIcons: ["🫧", "🐚", "💧"], auraColor: "#84ffff",
+      gloveColor: "#00e5ff", weaponSvg: "🔱", atkExpr: "😠🌊 AQUA WAVE!", skillExpr: "🧜‍♀️💙 SIREN BLESS!",
+      effectType: "regen", effectDesc: "Menyerang & Pulihkan +160 HP", stageName: "🐚 Underwater Mermaid Pearl Lagoon",
       ambientIcons: ["🫧", "🐚", "🐬", "✨"]
     },
     {
-      id: "shayla_pop",
-      name: "Shayla - Pink Fur Pop Diva",
-      img: "shayla_pop.png",
-      bgImg: "bg_pop.jpg",
-      role: "Sonic Enchanter",
-      hp: 530, atk: 100,
-      skillName: "Pink Spotlight Bassdrop",
-      ultName: "WORLD TOUR MEGASTAR",
-      skillMult: 2.5, bonusHeal: 130,
-      projIcon: "🎤", partIcons: ["🎵", "💖", "🎶"], auraColor: "#ff80ab",
-      gloveColor: "#ff4081", weaponSvg: "🎤",
-      atkExpr: "😜🎤 MIC DROP!", skillExpr: "🤩🎶 HIGH NOTE!",
-      effectType: "atk_up", effectDesc: "Buff Attack Diri +35% (3 Giliran)",
-      stageName: "🎤 Pastel Pink Starlight Opera Arena",
+      id: "shayla_pop", name: "Shayla - Pink Fur Pop Diva", img: "shayla_pop.png", bgImg: "bg_pop.jpg",
+      role: "Sonic Enchanter", hp: 530, atk: 100, skillName: "Pink Spotlight Bassdrop", ultName: "WORLD TOUR MEGASTAR",
+      skillMult: 2.5, bonusHeal: 130, projIcon: "🎤", partIcons: ["🎵", "💖", "🎶"], auraColor: "#ff80ab",
+      gloveColor: "#ff4081", weaponSvg: "🎤", atkExpr: "😜🎤 MIC DROP!", skillExpr: "🤩🎶 HIGH NOTE!",
+      effectType: "atk_up", effectDesc: "Buff Attack Diri +35% (3 Giliran)", stageName: "🎤 Pastel Pink Starlight Opera Arena",
       ambientIcons: ["💖", "🎵", "🎶", "🌸"]
     },
     {
-      id: "shayla_biker",
-      name: "Shayla - Crimson Rebel Biker",
-      img: "shayla_biker.png",
-      bgImg: "bg_biker.jpg",
-      role: "Lethal Brawler",
-      hp: 490, atk: 122,
-      skillName: "Crimson Leather Blitz",
-      ultName: "FULL THROTTLE KNOCKOUT",
-      skillMult: 2.9, bonusHeal: 90,
-      projIcon: "🔥", partIcons: ["💥", "🔥", "🌸"], auraColor: "#ff8a80",
-      gloveColor: "#d81b60", weaponSvg: "🥊",
-      atkExpr: "😡👊 REBEL PUNCH!", skillExpr: "🤬🔥 CRIT SMASH!",
-      effectType: "crit", effectDesc: "Pasti Critical Hit Berlipat Ganda",
-      stageName: "⛩️ Crimson Cherry Blossom Cliff Shrine",
+      id: "shayla_biker", name: "Shayla - Crimson Rebel Biker", img: "shayla_biker.png", bgImg: "bg_biker.jpg",
+      role: "Lethal Brawler", hp: 490, atk: 122, skillName: "Crimson Leather Blitz", ultName: "FULL THROTTLE KNOCKOUT",
+      skillMult: 2.9, bonusHeal: 90, projIcon: "🔥", partIcons: ["💥", "🔥", "🌸"], auraColor: "#ff8a80",
+      gloveColor: "#d81b60", weaponSvg: "🥊", atkExpr: "😡👊 REBEL PUNCH!", skillExpr: "🤬🔥 CRIT SMASH!",
+      effectType: "crit", effectDesc: "Pasti Critical Hit Berlipat Ganda", stageName: "⛩️ Crimson Cherry Blossom Cliff Shrine",
       ambientIcons: ["🌸", "🔥", "🍁", "✨"]
     },
     {
-      id: "shayla_galaxy",
-      name: "Shayla - Starlight Nebula",
-      img: "shayla_galaxy.png",
-      bgImg: "bg_galaxy.jpg",
-      role: "Cosmic Sorceress",
-      hp: 540, atk: 115,
-      skillName: "Nebula Sequins Meteor",
-      ultName: "BIG BANG COLLAPSE",
-      skillMult: 2.7, bonusHeal: 120,
-      projIcon: "☄️", partIcons: ["🪐", "🌌", "⭐"], auraColor: "#b388ff",
-      gloveColor: "#7c4dff", weaponSvg: "🪐",
-      atkExpr: "😠🌌 STAR SHOT!", skillExpr: "🔮✨ COSMIC GRAVITY!",
-      effectType: "weaken", effectDesc: "Melemahkan Attack Musuh -40%",
-      stageName: "🪐 Starlight Astral Galaxy Observatory",
+      id: "shayla_galaxy", name: "Shayla - Starlight Nebula", img: "shayla_galaxy.png", bgImg: "bg_galaxy.jpg",
+      role: "Cosmic Sorceress", hp: 540, atk: 115, skillName: "Nebula Sequins Meteor", ultName: "BIG BANG COLLAPSE",
+      skillMult: 2.7, bonusHeal: 120, projIcon: "☄️", partIcons: ["🪐", "🌌", "⭐"], auraColor: "#b388ff",
+      gloveColor: "#7c4dff", weaponSvg: "🪐", atkExpr: "😠🌌 STAR SHOT!", skillExpr: "🔮✨ COSMIC GRAVITY!",
+      effectType: "weaken", effectDesc: "Melemahkan Attack Musuh -40%", stageName: "🪐 Starlight Astral Galaxy Observatory",
       ambientIcons: ["🪐", "⭐", "🌙", "✨"]
     },
     {
-      id: "shayla_royal",
-      name: "Shayla - Sovereign Lace Queen",
-      img: "shayla_royal.png",
-      bgImg: "bg_royal.jpg",
-      role: "Royal Paladin",
-      hp: 700, atk: 110,
-      skillName: "Emerald Leaf Judgment",
-      ultName: "ROYAL CORONATION FINALE",
-      skillMult: 2.6, bonusHeal: 185,
-      projIcon: "🌿", partIcons: ["🍃", "👑", "🌹"], auraColor: "#b9f6ca",
-      gloveColor: "#ffd54f", weaponSvg: "👑",
-      atkExpr: "😠👑 ROYAL SLASH!", skillExpr: "😌🌿 QUEEN DECREE!",
-      effectType: "shield_heal", effectDesc: "Memberi +130 Shield & +130 HP",
-      stageName: "🌹 Royal Emerald & Rose Botanical Palace",
+      id: "shayla_royal", name: "Shayla - Sovereign Lace Queen", img: "shayla_royal.png", bgImg: "bg_royal.jpg",
+      role: "Royal Paladin", hp: 700, atk: 110, skillName: "Emerald Leaf Judgment", ultName: "ROYAL CORONATION FINALE",
+      skillMult: 2.6, bonusHeal: 185, projIcon: "🌿", partIcons: ["🍃", "👑", "🌹"], auraColor: "#b9f6ca",
+      gloveColor: "#ffd54f", weaponSvg: "👑", atkExpr: "😠👑 ROYAL SLASH!", skillExpr: "😌🌿 QUEEN DECREE!",
+      effectType: "shield_heal", effectDesc: "Memberi +130 Shield & +130 HP", stageName: "🌹 Royal Emerald & Rose Botanical Palace",
       ambientIcons: ["🌹", "🍃", "👑", "🦋"]
     },
     {
-      id: "shelly_purple",
-      name: "Shelly - Amethyst Night Princess",
-      img: "shelly_purple.png",
-      bgImg: "bg_shelly.jpg",
-      role: "Dark Archmage (SSR)",
-      hp: 670, atk: 140,
-      skillName: "Violet Ruffle Apocalypse",
-      ultName: "ABYSSAL MIDNIGHT REQUIEM",
-      skillMult: 3.2, bonusHeal: 170,
-      projIcon: "🔮", partIcons: ["🔮", "🦋", "💜"], auraColor: "#ea80fc",
-      gloveColor: "#9c27b0", weaponSvg: "🔮",
-      atkExpr: "😈🔮 DARK BOLT!", skillExpr: "🧛‍♀️💜 SOUL DRAIN!",
-      effectType: "lifesteal", effectDesc: "Menyedot 50% Damage Jadi HP",
-      stageName: "🦋 Enchanted Amethyst Wisteria Castle",
+      id: "shelly_purple", name: "Shelly - Amethyst Night Princess", img: "shelly_purple.png", bgImg: "bg_shelly.jpg",
+      role: "Dark Archmage (SSR)", hp: 670, atk: 140, skillName: "Violet Ruffle Apocalypse", ultName: "ABYSSAL MIDNIGHT REQUIEM",
+      skillMult: 3.2, bonusHeal: 170, projIcon: "🔮", partIcons: ["🔮", "🦋", "💜"], auraColor: "#ea80fc",
+      gloveColor: "#9c27b0", weaponSvg: "🔮", atkExpr: "😈🔮 DARK BOLT!", skillExpr: "🧛‍♀️💜 SOUL DRAIN!",
+      effectType: "lifesteal", effectDesc: "Menyedot 50% Damage Jadi HP", stageName: "🦋 Enchanted Amethyst Wisteria Castle",
       ambientIcons: ["🦋", "💜", "🔮", "🌸"]
     }
   ];
 
-  // =========================================================================
-  // 4. DATABASE 5 BOSS MONSTER CHIBI
-  // =========================================================================
   const MONSTER_BOSSES = [
     { name: "Shadow Critic Empress", proj: "🌑", aura: "#ff80ab", img: "boss_critic.jpg" },
     { name: "Cyber Runway Mecha", proj: "⚡", aura: "#80deea", img: "boss_mecha.jpg" },
@@ -756,7 +688,7 @@
   ];
 
   // =========================================================================
-  // 5. STATE GAME & LOGIC
+  // 4. STATE GAME & LOGIC
   // =========================================================================
   let player = {
     username: localStorage.getItem("rpg_username") || "Player1",
@@ -770,7 +702,7 @@
   let battle = {
     pMaxHp: 580, pHp: 580, pShield: 0, pUlt: 0, pAtkBuff: 0,
     eMaxHp: 500, eHp: 500, eAtk: 48, eStun: 0, eBurn: 0, eWeaken: 0,
-    cdSkill: 0, cdHeal: 0, combo: 0, busy: false
+    cdSkill: 0, cdHeal: 0, combo: 0, busy: false, enemyTimer: null
   };
 
   function initGame() {
@@ -824,12 +756,12 @@
   function renderPuppetArms(skin) {
     document.getElementById("p-arm-l").innerHTML = `
       <svg viewBox="0 0 60 90" width="100%" height="100%">
-        <circle cx="22" cy="65" r="10" fill="${skin.gloveColor}" stroke="#fff" stroke-width="2" opacity="0.85"/>
+        <circle cx="22" cy="65" r="10" fill="${skin.gloveColor}" stroke="#fff" stroke-width="2" opacity="0.88"/>
       </svg>
     `;
     document.getElementById("p-arm-r").innerHTML = `
       <svg viewBox="0 0 70 95" width="100%" height="100%">
-        <text x="20" y="55" font-size="30">${skin.weaponSvg}</text>
+        <text x="25" y="55" font-size="30">${skin.weaponSvg}</text>
       </svg>
     `;
   }
@@ -850,7 +782,12 @@
     el.classList.add("show");
   }
 
+  // =========================================================================
+  // 5. SETUP & MUSUH NYERANG TERUS SECARA KONTINU (NO WAIT)
+  // =========================================================================
   function setupStage() {
+    if (battle.enemyTimer) clearInterval(battle.enemyTimer);
+
     const skin = getActiveSkin();
     applyCharacterStageTheme(skin);
 
@@ -867,9 +804,9 @@
 
     const stg = player.maxStage;
     const boss = MONSTER_BOSSES[(stg - 1) % MONSTER_BOSSES.length];
-    battle.eMaxHp = 420 + (stg * 155);
+    battle.eMaxHp = 420 + (stg * 150);
     battle.eHp = battle.eMaxHp;
-    battle.eAtk = 40 + (stg * 15);
+    battle.eAtk = 38 + (stg * 12);
     battle.eStun = 0;
     battle.eBurn = 0;
     battle.eWeaken = 0;
@@ -889,10 +826,17 @@
     renderPuppetArms(skin);
     updateBattleUI();
     showAnnouncer(`STAGE ${stg} - FIGHT!`);
+
+    // Musuh menyerang terus menerus setiap 3.2 detik jika pemain diam
+    battle.enemyTimer = setInterval(() => {
+      if (battle.eHp > 0 && battle.pHp > 0 && !battle.busy) {
+        enemyTurn();
+      }
+    }, 3200);
   }
 
   // =========================================================================
-  // 6. SISTEM ANIMASI PERTARUNGAN
+  // 6. ANIMASI & EFEK PERTARUNGAN DRAMATIS
   // =========================================================================
   function spawnProjectile(icon) {
     const layer = document.getElementById("fx-layer");
@@ -900,7 +844,7 @@
     proj.className = "projectile";
     proj.innerText = icon;
     layer.appendChild(proj);
-    setTimeout(() => proj.remove(), 460);
+    setTimeout(() => proj.remove(), 420);
   }
 
   function spawnParticleBurst(icons, targetSide = 'enemy') {
@@ -913,7 +857,7 @@
       p.style.left = centerX + "%";
       p.style.top = "52%";
       const angle = (Math.PI * 2 * i) / 12;
-      const dist = 60 + Math.random() * 80;
+      const dist = 65 + Math.random() * 85;
       p.style.setProperty("--tx", `${Math.cos(angle) * dist}px`);
       p.style.setProperty("--ty", `${Math.sin(angle) * dist}px`);
       layer.appendChild(p);
@@ -925,7 +869,7 @@
     const layer = document.getElementById("fx-layer");
     const pop = document.createElement("div");
     pop.className = "dmg-popup";
-    pop.style.left = targetSide === 'enemy' ? "75%" : "25%";
+    pop.style.left = targetSide === 'enemy' ? "76%" : "24%";
     pop.style.top = "38%";
     pop.style.color = color;
     pop.innerHTML = text;
@@ -983,7 +927,7 @@
   }
 
   // =========================================================================
-  // 7. EKSEKUSI SERANGAN
+  // 7. AKSI PEMAIN KE KANAN & MUSUH MENYERANG
   // =========================================================================
   function playerAction(type) {
     if (battle.busy) return;
@@ -1013,7 +957,7 @@
         eRig.classList.add("tekken-knockback");
         spawnParticleBurst(skin.partIcons, 'enemy');
         showFloatingText(`👊 -${dmg}`, 'enemy', '#d81b60');
-        logBattle(`👊 <b>${skin.name}</b> menerjang dan memukul sebesar <b>${dmg} DMG</b>!`);
+        logBattle(`👊 <b>${skin.name}</b> menghadap kanan dan memukul musuh sebesar <b>${dmg} DMG</b>!`);
 
         setTimeout(() => {
           pRig.classList.remove("tekken-lunge-right");
@@ -1021,7 +965,7 @@
           eRig.classList.remove("tekken-knockback");
           afterPlayerTurn();
         }, 320);
-      }, 300);
+      }, 280);
 
     } else if (type === 'skill') {
       playSfx('skill');
@@ -1038,24 +982,15 @@
         battle.pUlt = Math.min(100, battle.pUlt + 40);
 
         let fxText = "";
-        if (skin.effectType === "shield") {
-          battle.pShield += 150; fxText = " + 🛡️150 Shield!";
-        } else if (skin.effectType === "stun") {
-          battle.eStun = 1; fxText = " + ⛓️STUN 1 Giliran!";
-        } else if (skin.effectType === "burn") {
-          battle.eBurn = 3; fxText = " + 🔥BURN 3 Giliran!";
-        } else if (skin.effectType === "regen") {
-          battle.pHp = Math.min(battle.pMaxHp, battle.pHp + 160); fxText = " + 💧Heal 160 HP!";
-        } else if (skin.effectType === "atk_up") {
-          battle.pAtkBuff = 3; fxText = " + 🎤ATK UP +35%!";
-        } else if (skin.effectType === "crit") {
-          dmg = Math.floor(dmg * 1.45); fxText = " (💥CRITICAL!)";
-        } else if (skin.effectType === "weaken") {
-          battle.eWeaken = 2; fxText = " + 🪐WEAKEN -40%!";
-        } else if (skin.effectType === "shield_heal") {
-          battle.pShield += 130; battle.pHp = Math.min(battle.pMaxHp, battle.pHp + 130);
-          fxText = " + 👑130 Shield & Heal!";
-        } else if (skin.effectType === "lifesteal") {
+        if (skin.effectType === "shield") { battle.pShield += 150; fxText = " + 🛡️150 Shield!"; }
+        else if (skin.effectType === "stun") { battle.eStun = 1; fxText = " + ⛓️STUN 1 Giliran!"; }
+        else if (skin.effectType === "burn") { battle.eBurn = 3; fxText = " + 🔥BURN 3 Giliran!"; }
+        else if (skin.effectType === "regen") { battle.pHp = Math.min(battle.pMaxHp, battle.pHp + 160); fxText = " + 💧Heal 160 HP!"; }
+        else if (skin.effectType === "atk_up") { battle.pAtkBuff = 3; fxText = " + 🎤ATK UP +35%!"; }
+        else if (skin.effectType === "crit") { dmg = Math.floor(dmg * 1.45); fxText = " (💥CRITICAL!)"; }
+        else if (skin.effectType === "weaken") { battle.eWeaken = 2; fxText = " + 🪐WEAKEN -40%!"; }
+        else if (skin.effectType === "shield_heal") { battle.pShield += 130; battle.pHp = Math.min(battle.pMaxHp, battle.pHp + 130); fxText = " + 👑130 Shield & Heal!"; }
+        else if (skin.effectType === "lifesteal") {
           const stolen = Math.floor(dmg * 0.5);
           battle.pHp = Math.min(battle.pMaxHp, battle.pHp + stolen);
           fxText = ` + 🔮Lifesteal +${stolen} HP!`;
@@ -1065,14 +1000,14 @@
         eRig.classList.add("tekken-knockback");
         spawnParticleBurst(skin.partIcons, 'enemy');
         showFloatingText(`✨ -${dmg}`, 'enemy', '#8e24aa');
-        logBattle(`✨ <b>${skin.skillName}!</b> Menghantam <b>${dmg} DMG</b>${fxText}`);
+        logBattle(`✨ <b>${skin.skillName}!</b> Menghantam musuh sebesar <b>${dmg} DMG</b>${fxText}`);
 
         setTimeout(() => {
           pBody.classList.remove("swing-attack");
           eRig.classList.remove("tekken-knockback");
           afterPlayerTurn();
         }, 350);
-      }, 420);
+      }, 380);
 
     } else if (type === 'ult') {
       playSfx('ult');
@@ -1086,24 +1021,24 @@
       spawnProjectile(skin.projIcon);
 
       setTimeout(() => {
-        const dmg = Math.floor(baseAtk * (skin.skillMult + 1.7));
+        const dmg = Math.floor(baseAtk * (skin.skillMult + 1.8));
         battle.pUlt = 0;
-        battle.pShield += 120;
+        battle.pShield += 140;
         battle.eHp = Math.max(0, battle.eHp - dmg);
 
         eRig.classList.add("tekken-knockback");
         spawnParticleBurst(skin.partIcons, 'enemy');
         spawnParticleBurst(["💥", "👑", "🌸"], 'enemy');
         showFloatingText(`👑 RAGE ART -${dmg}!`, 'enemy', '#ff1e7a');
-        logBattle(`👑 <b>RAGE ART: ${skin.ultName}!</b> Menghancurkan musuh sebesar <b>${dmg} DMG</b>!`);
+        logBattle(`👑 <b>RAGE ART: ${skin.ultName}!</b> Serangan pamungkas menghantam <b>${dmg} DMG</b>!`);
 
         setTimeout(() => {
           pRig.classList.remove("tekken-lunge-right");
           pBody.classList.remove("swing-attack");
           eRig.classList.remove("tekken-knockback");
           afterPlayerTurn();
-        }, 450);
-      }, 520);
+        }, 420);
+      }, 480);
 
     } else if (type === 'heal') {
       playSfx('heal');
@@ -1122,7 +1057,7 @@
       setTimeout(() => {
         pBody.classList.remove("swing-attack");
         afterPlayerTurn();
-      }, 450);
+      }, 400);
     }
   }
 
@@ -1141,27 +1076,26 @@
     }
 
     if (battle.eHp <= 0) {
+      if (battle.enemyTimer) clearInterval(battle.enemyTimer);
       showAnnouncer("K.O. - YOU WIN!");
-      const rewardGems = 80 + (player.maxStage * 15);
+      const rewardGems = 90 + (player.maxStage * 18);
       player.gems += rewardGems;
       player.level += 1;
       player.maxStage += 1;
-      logBattle(`🏆 <b>K.O.!</b> Naik ke Lv.${player.level} & meraih <b>+${rewardGems} Gems 💎</b>!`);
+      logBattle(`🏆 <b>K.O.!</b> Menang! Naik ke Lv.${player.level} & meraih <b>+${rewardGems} Gems 💎</b>!`);
       saveLocal();
       setTimeout(setupStage, 1400);
       return;
     }
 
-    setTimeout(enemyTurn, 600);
+    battle.busy = false;
   }
 
   function enemyTurn() {
     if (battle.eStun > 0) {
       battle.eStun--;
       showFloatingText("⛓️ STUNNED!", "enemy", "#d81b60");
-      logBattle(`⛓️ Boss terikat rantai emas dan gagal menyerang!`);
-      battle.busy = false;
-      updateBattleUI();
+      logBattle(`⛓️ Boss tertahan rantai magis dan gagal menyerang!`);
       return;
     }
 
@@ -1200,25 +1134,25 @@
 
       pRig.classList.add("tekken-knockback");
       showFloatingText(eDmg > 0 ? `-${eDmg}` : `🛡️ GUARD!`, 'player', '#c62828');
-      logBattle(`👾 <b>${boss.name}</b> menerjang dan menyerang sebesar <b>${eDmg} DMG</b>!`);
+      logBattle(`👾 <b>${boss.name}</b> menyerang balik sebesar <b>${eDmg} DMG</b>!`);
 
       setTimeout(() => {
         eRig.classList.remove("tekken-lunge-left");
         pRig.classList.remove("tekken-knockback");
 
         if (battle.pHp <= 0) {
+          if (battle.enemyTimer) clearInterval(battle.enemyTimer);
           showAnnouncer("RETRY STAGE!");
           setTimeout(setupStage, 1200);
           return;
         }
-        battle.busy = false;
         updateBattleUI();
-      }, 350);
-    }, 300);
+      }, 320);
+    }, 280);
   }
 
   // =========================================================================
-  // 8. WARDROBE, GACHA & GOOGLE SHEETS
+  // 8. WARDROBE, GACHA, GOOGLE SIGN-IN & GOOGLE SHEETS SYNC
   // =========================================================================
   function renderWardrobe() {
     const grid = document.getElementById("skin-grid");
@@ -1232,7 +1166,7 @@
         <img src="${s.img}" alt="${s.name}" />
         <h4 style="margin:8px 0 4px; color:var(--pink-deep);">${s.name}</h4>
         <span class="role-tag">${s.role}</span>
-        <div style="font-size:0.8rem; margin-bottom:10px; line-height:1.45;">
+        <div style="font-size:0.8rem; margin-bottom:12px; line-height:1.5;">
           ❤️ HP: <b>${s.hp}</b> | ⚔️ ATK: <b>${s.atk}</b><br/>
           <b>Dunia:</b> ${s.stageName}<br/>
           <span style="color:var(--pink-hot); font-weight:bold;">${s.effectDesc}</span>
@@ -1257,7 +1191,7 @@
 
   function pullGacha() {
     if (player.gems < 100) {
-      alert("Pink Gems belum cukup! Menangkan ronde di Arena dulu.");
+      alert("Pink Gems belum cukup! Menangkan pertempuran di Arena untuk mengumpulkan Gems.");
       return;
     }
     playSfx('ult');
@@ -1270,7 +1204,7 @@
       msg = `🎉 <b>FIGHTER & DUNIA BARU TERBUKA!</b> Kamu mendapatkan <b>${picked.name}</b> (${picked.stageName})!`;
     } else {
       player.level += 1;
-      msg = `✨ Duplikat <b>${picked.name}</b>! Otomatis meningkatkan levelmu ke <b>Lv.${player.level}</b>!`;
+      msg = `✨ Duplikat <b>${picked.name}</b>! Level karaktermu meningkat ke <b>Lv.${player.level}</b>!`;
     }
 
     saveLocal();
@@ -1278,17 +1212,35 @@
     setupStage();
 
     document.getElementById("gacha-result").innerHTML = `
-      <div style="background:#fff0f6; display:inline-block; padding:22px; border-radius:20px; border:4px solid var(--pink-hot); box-shadow:0 8px 25px rgba(255,71,145,0.25);">
-        <img src="${picked.img}" style="width:185px; height:245px; object-fit:contain; border-radius:14px;" />
-        <h3 style="color:var(--pink-deep);">${picked.weaponSvg} ${picked.name}</h3>
-        <p style="font-weight:bold; color:var(--pink-hot);">${picked.stageName}</p>
-        <p>${msg}</p>
+      <div style="background:#fff0f6; display:inline-block; padding:24px; border-radius:22px; border:4px solid var(--pink-hot); box-shadow:0 10px 28px rgba(255,71,145,0.28);">
+        <img src="${picked.img}" style="width:190px; height:250px; object-fit:contain; border-radius:16px;" />
+        <h3 style="color:var(--pink-deep); margin:10px 0 4px;">${picked.weaponSvg} ${picked.name}</h3>
+        <p style="font-weight:bold; color:var(--pink-hot); font-size:0.85rem;">${picked.stageName}</p>
+        <p style="font-size:0.9rem;">${msg}</p>
       </div>
     `;
   }
 
   function getTotalPower() {
-    return (player.level * 150) + (player.unlockedSkins.length * 300);
+    return (player.level * 160) + (player.unlockedSkins.length * 320);
+  }
+
+  // Google Sign-In Callback
+  function handleGoogleSignIn(response) {
+    try {
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+      const profile = JSON.parse(jsonPayload);
+
+      player.username = profile.name || profile.email.split('@')[0];
+      document.getElementById("input-username").value = player.username;
+      saveLocal();
+      document.getElementById("cloud-status").innerText = `✅ Login Google Berhasil: Selamat datang, ${player.username}!`;
+      saveToGoogleSheets();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function saveToGoogleSheets() {
@@ -1297,7 +1249,7 @@
     saveLocal();
 
     if (GAS_URL.includes("MASUKKAN_URL")) {
-      alert("Masukkan URL Web App Google Apps Script kamu di variabel GAS_URL pada index.html!");
+      alert("Pastikan URL GAS_URL sudah diatur dengan benar.");
       return;
     }
 
@@ -1342,7 +1294,7 @@
         player.maxStage = result.player.maxStage;
         player.unlockedSkins = result.player.unlockedSkins;
         saveLocal(); renderWardrobe(); setupStage();
-        statusEl.innerText = `✅ Akun ${player.username} berhasil dimuat!`;
+        statusEl.innerText = `✅ Akun ${player.username} berhasil dimuat dari Google Sheets!`;
       } else {
         statusEl.innerText = "⚠️ Username belum ditemukan di Google Sheets.";
       }
@@ -1370,7 +1322,7 @@
         tbody.innerHTML = `<tr><td colspan="4">Belum ada data di Leaderboard.</td></tr>`;
       }
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="4">Pastikan GAS_URL sudah diisi dengan benar.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4">Gagal terhubung ke Google Sheets.</td></tr>`;
     }
   }
 
@@ -1381,6 +1333,7 @@
     btn.classList.add("active");
   }
 
+  // Mulai game saat halaman dimuat
   initGame();
 </script>
 </body>
