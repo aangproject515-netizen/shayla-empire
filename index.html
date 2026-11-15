@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.5</title>
+  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.7</title>
   <!-- Google Identity Services untuk Google Sign-In -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
@@ -22,6 +22,24 @@
       background: linear-gradient(135deg, #ffd6e8 0%, #ffeef6 35%, #fff7d6 70%, #e8dcf8 100%);
       color: var(--text-main); min-height: 100vh; overflow-x: hidden;
     }
+
+    /* LOGIN SCREEN / DASHBOARD UTAMA AWAL */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 999;
+      background-size: cover; background-position: center;
+      background-repeat: no-repeat;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.5s ease;
+    }
+    #login-screen.hidden { opacity: 0; pointer-events: none; }
+    .login-card {
+      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(14px);
+      padding: 35px 45px; border-radius: 30px; border: 4px solid var(--pink-pastel);
+      text-align: center; max-width: 440px; width: 90%;
+      box-shadow: 0 15px 45px rgba(184, 37, 101, 0.3);
+    }
+    .login-card h1 { font-size: 1.6rem; color: var(--pink-deep); margin-bottom: 8px; text-transform: uppercase; }
+    .login-card p { font-size: 0.92rem; color: var(--text-main); margin-bottom: 24px; line-height: 1.5; }
 
     header {
       background: rgba(255, 240, 247, 0.95); backdrop-filter: blur(12px);
@@ -84,7 +102,6 @@
       white-space: nowrap;
     }
 
-    /* SCREEN SHAKE EFFECT UNTUK HANTAMAN DRAMATIS */
     .screen-shake {
       animation: stageShake 0.35s cubic-bezier(.36,.07,.19,.97) both;
     }
@@ -205,7 +222,6 @@
       filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
     }
 
-    /* EKSPRESI WAJAH */
     .face-expression {
       position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
       z-index: 12; pointer-events: none;
@@ -219,7 +235,6 @@
       white-space: nowrap;
     }
 
-    /* LENGAN SENJATA ANIMASI MENGHADAP KANAN */
     .puppet-arm {
       position: absolute; top: 122px; width: 55px; height: 82px;
       z-index: 15; pointer-events: none; transform-origin: top center;
@@ -257,7 +272,6 @@
       55% { transform: translateX(-18px) rotate(-6deg) scale(1.05); }
     }
 
-    /* FX LAYER & PROJEKTIL */
     .fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 40; overflow: hidden; }
     .tekken-announcer {
       position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%) scale(0);
@@ -305,7 +319,6 @@
       100% { transform: translate(var(--tx), var(--ty)) scale(1.8) rotate(45deg); opacity: 0; }
     }
 
-    /* STATUS & TOMBOL RAMAH/FRIENDLY */
     .status-strip {
       display: flex; justify-content: space-between; align-items: center;
       margin-top: 14px; padding: 12px 18px;
@@ -342,7 +355,6 @@
       font-size: 0.92rem; border: 2px solid var(--pink-pastel); line-height: 1.6;
     }
 
-    /* WARDROBE GRID */
     .skin-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px;
     }
@@ -379,6 +391,32 @@
 </head>
 <body>
 
+  <!-- DASHBOARD LOGIN PERTAMA KALI MASUK GAME -->
+  <div id="login-screen" style="background-image: url('bg_login.jpg');">
+    <div class="login-card">
+      <h1>🌸 Magical Tekken Arena</h1>
+      <p>Masuk menggunakan akun Google Anda untuk memulai petualangan, menyimpan progress, dan bertarung di leaderboard!</p>
+      
+      <!-- Tombol Google Sign-In -->
+      <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+        <div id="g_id_onload"
+             data-client_id="655503681764-tk8hrqeckksbdp3hm7kp6agjlhie8bfm.apps.googleusercontent.com"
+             data-callback="handleGoogleSignIn"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="sign_in_with" data-size="large"></div>
+      </div>
+
+      <div style="margin-top: 12px; font-size: 0.82rem; color: var(--pink-deep); font-weight: bold;">
+        Atau masuk secara manual:
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <input type="text" id="guest-username" placeholder="Ketik Username..." style="padding: 10px 14px; border-radius: 12px; border: 2px solid var(--pink-hot); flex: 1; font-weight: bold;" />
+        <button class="btn-action btn-atk" style="padding: 10px 16px; font-size: 0.85rem;" onclick="guestLogin()">Mulai Main</button>
+      </div>
+    </div>
+  </div>
+
 <header>
   <div class="brand">🌸 SHAYLA & SHELLY <span>MAGICAL TEKKEN ARENA</span></div>
   <div class="stats-bar">
@@ -400,7 +438,6 @@
 
   <!-- TAB 1: BATTLE ARENA -->
   <div id="tab-battle" class="panel active">
-    <!-- Arena bersih tanpa emoticon melayang -->
     <div class="tekken-stage" id="battle-arena" style="background-image: url('bg_mosaic.jpg');">
       <div class="genshin-lighting"></div>
 
@@ -460,7 +497,7 @@
           </div>
         </div>
 
-        <!-- BOSS MONSTER DI KANAN -->
+        <!-- BOSS MONSTER -->
         <div class="rig-container" id="e-rig">
           <div class="ground-shadow"></div>
           <div class="fighter-aura" id="e-aura"></div>
@@ -487,7 +524,7 @@
     </div>
 
     <div class="battle-log" id="battle-log">
-      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.5!</b> Ekspresi Shayla & Shelly kini berfungsi sempurna kembali (`_atk.png` & `_hit.png`). Background bersih & efek dramatis aktif!</div>
+      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.7!</b> Dashboard Login awal dengan latar <code>bg_login.jpg</code> telah diaktifkan!</div>
     </div>
   </div>
 
@@ -512,14 +549,6 @@
     <p>Masuk dengan akun Google Anda untuk menyimpan progress ke Google Sheets dan tampil di Leaderboard Global!</p>
     
     <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px;">
-      <!-- Google Sign In Button Container -->
-      <div id="g_id_onload"
-           data-client_id="655503681764-tk8hrqeckksbdp3hm7kp6agjlhie8bfm.apps.googleusercontent.com"
-           data-callback="handleGoogleSignIn"
-           data-auto_prompt="false">
-      </div>
-      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="sign_in_with" data-size="large"></div>
-
       <input type="text" id="input-username" placeholder="Atau ketik Username kamu..." style="padding:13px 18px; border-radius:16px; border:2px solid var(--pink-hot); background:#fff; color:var(--text-main); flex:1; font-weight:bold; font-size:0.95rem;" />
       <button class="btn-action btn-heal" onclick="loadFromGoogleSheets()">📥 Load dari Sheet</button>
       <button class="btn-action btn-cloud" onclick="saveToGoogleSheets()">📤 Save ke Sheet</button>
@@ -664,7 +693,7 @@
     { name: "Cyber Runway Mecha", proj: "⚡", aura: "#80deea", img: "boss_mecha.png" },
     { name: "Neon Envy Witch", proj: "🧪", aura: "#b9f6ca", img: "boss_witch.png" },
     { name: "Abyss Couture Dragon", proj: "☄️", aura: "#ea80fc", img: "boss_dragon.png" },
-    { name: "Velvet Crystal Porcupine", proj: "💎", aura: "#ff4081", img: "boss_quill" }
+    { name: "Velvet Crystal Porcupine", proj: "💎", aura: "#ff4081", img: "Velvet Crystal Porcupine.jpg" }
   ];
 
   // =========================================================================
@@ -910,7 +939,6 @@
     const pImg = document.getElementById("p-img");
     const eRig = document.getElementById("e-rig");
 
-    // Perbaikan: Gunakan skin.id + "_atk.png" agar file gambar pemain akurat
     pImg.src = skin.id + "_atk.png";
 
     let baseAtk = skin.atk + (player.level * 10);
@@ -947,7 +975,7 @@
         setTimeout(() => {
           pRig.classList.remove("tekken-lunge-right");
           pBody.classList.remove("swing-attack");
-          pImg.src = skin.img; // Kembali ke idle normal
+          pImg.src = skin.img;
           eRig.classList.remove("tekken-knockback");
           monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
           afterPlayerTurn();
@@ -1116,7 +1144,6 @@
     eRig.classList.add("tekken-lunge-left");
 
     setTimeout(() => {
-      // Perbaikan: Ubah gambar pemain ke _hit.png saat menerima serangan musuh
       pImg.src = skin.id + "_hit.png";
       triggerScreenShake();
 
@@ -1151,7 +1178,7 @@
       setTimeout(() => {
         eRig.classList.remove("tekken-lunge-left");
         pRig.classList.remove("tekken-knockback");
-        pImg.src = skin.img; // Kembali ke idle normal
+        pImg.src = skin.img;
         monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
 
         if (battle.pHp <= 0) {
@@ -1166,8 +1193,32 @@
   }
 
   // =========================================================================
-  // 9. WARDROBE, GACHA & GOOGLE SHEETS
+  // 9. WARDROBE, GACHA, LOGIN & GOOGLE SHEETS
   // =========================================================================
+  function guestLogin() {
+    const uInput = document.getElementById("guest-username").value.trim();
+    if (!uInput) return alert("Masukkan username terlebih dahulu!");
+    player.username = uInput;
+    saveLocal();
+    document.getElementById("login-screen").classList.add("hidden");
+  }
+
+  function handleGoogleSignIn(response) {
+    try {
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+      const profile = JSON.parse(jsonPayload);
+
+      player.username = profile.name || profile.email.split('@')[0];
+      saveLocal();
+      document.getElementById("login-screen").classList.add("hidden");
+      saveToGoogleSheets();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   function renderWardrobe() {
     const grid = document.getElementById("skin-grid");
     grid.innerHTML = "";
@@ -1239,35 +1290,15 @@
     return (player.level * 160) + (player.unlockedSkins.length * 320);
   }
 
-  function handleGoogleSignIn(response) {
-    try {
-      const base64Url = response.credential.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-      const profile = JSON.parse(jsonPayload);
-
-      player.username = profile.name || profile.email.split('@')[0];
-      document.getElementById("input-username").value = player.username;
-      saveLocal();
-      document.getElementById("cloud-status").innerText = `✅ Login Google Berhasil: Selamat datang, ${player.username}!`;
-      saveToGoogleSheets();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   async function saveToGoogleSheets() {
     const uname = document.getElementById("input-username").value.trim() || player.username;
     player.username = uname;
     saveLocal();
 
-    if (GAS_URL.includes("MASUKKAN_URL")) {
-      alert("Pastikan URL GAS_URL sudah diatur dengan benar.");
-      return;
-    }
+    if (GAS_URL.includes("MASUKKAN_URL")) return;
 
     const statusEl = document.getElementById("cloud-status");
-    statusEl.innerText = "⏳ Menyimpan ke Google Sheets...";
+    if(statusEl) statusEl.innerText = "⏳ Menyimpan ke Google Sheets...";
 
     try {
       const res = await fetch(GAS_URL, {
@@ -1284,10 +1315,10 @@
         })
       });
       const data = await res.json();
-      statusEl.innerText = "✅ " + data.message;
+      if(statusEl) statusEl.innerText = "✅ " + data.message;
       fetchLeaderboard();
     } catch (err) {
-      statusEl.innerText = "❌ Gagal menyimpan: " + err;
+      if(statusEl) statusEl.innerText = "❌ Gagal menyimpan: " + err;
     }
   }
 
@@ -1318,6 +1349,7 @@
 
   async function fetchLeaderboard() {
     const tbody = document.getElementById("leaderboard-body");
+    if (!tbody) return;
     tbody.innerHTML = `<tr><td colspan="4">⏳ Memuat Ranking...</td></tr>`;
     try {
       const res = await fetch(`${GAS_URL}?action=getLeaderboard`);
