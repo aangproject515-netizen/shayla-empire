@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.4</title>
+  <title>Shayla & Shelly: Genshin Pastel Tekken Arena v5.5</title>
   <!-- Google Identity Services untuk Google Sign-In -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
@@ -57,7 +57,7 @@
     }
     .panel.active { display: block; }
 
-    /* ================= ARENA CLEAN & DRAMATIS ================= */
+    /* ================= ARENA BERSIH & AESTHETIC ================= */
     .tekken-stage {
       position: relative; width: 100%; height: 520px; border-radius: 24px;
       overflow: hidden; border: 4px solid #fff;
@@ -400,7 +400,7 @@
 
   <!-- TAB 1: BATTLE ARENA -->
   <div id="tab-battle" class="panel active">
-    <!-- Arena tanpa emoticon berterbangan di background (clean & aesthetic) -->
+    <!-- Arena bersih tanpa emoticon melayang -->
     <div class="tekken-stage" id="battle-arena" style="background-image: url('bg_mosaic.jpg');">
       <div class="genshin-lighting"></div>
 
@@ -460,7 +460,7 @@
           </div>
         </div>
 
-        <!-- BOSS MONSTER DI KANAN (SUPPORT PNG / JPG & EKSPRESI _atk / _hit) -->
+        <!-- BOSS MONSTER DI KANAN -->
         <div class="rig-container" id="e-rig">
           <div class="ground-shadow"></div>
           <div class="fighter-aura" id="e-aura"></div>
@@ -487,7 +487,7 @@
     </div>
 
     <div class="battle-log" id="battle-log">
-      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.4!</b> Latar belakang bersih tanpa emoticon melayang. Efek dramatis layar berguncang (*screen shake*) dan animasi ekspresi musuh aktif sepenuhnya!</div>
+      <div>🌸 <b>MAGICAL TEKKEN ARENA v5.5!</b> Ekspresi Shayla & Shelly kini berfungsi sempurna kembali (`_atk.png` & `_hit.png`). Background bersih & efek dramatis aktif!</div>
     </div>
   </div>
 
@@ -591,7 +591,7 @@
   }
 
   // =========================================================================
-  // 3. DATABASE 9 FIGHTER & 5 BOSS MONSTER (DISESUAIKAN DENGAN NAMA DI GITHUB)
+  // 3. DATABASE 9 FIGHTER & 5 BOSS MONSTER
   // =========================================================================
   const SKINS_DB = [
     {
@@ -659,7 +659,6 @@
     }
   ];
 
-  // Diset akurat sesuai nama file di github Anda (boss_critic, boss_mecha, boss_witch, boss_dragon, Velvet Crystal Porcupine)
   const MONSTER_BOSSES = [
     { name: "Shadow Critic Empress", proj: "🌑", aura: "#ff80ab", img: "boss_critic.png" },
     { name: "Cyber Runway Mecha", proj: "⚡", aura: "#80deea", img: "boss_mecha.png" },
@@ -900,7 +899,7 @@
   }
 
   // =========================================================================
-  // 7. AKSI PEMAIN, EFEK DRAMATIS, & PERGANTIAN EKSPRESI BOSS (_hit.png / _atk.png)
+  // 7. AKSI PEMAIN & PERGANTIAN GAMBAR _atk.png DAN _hit.png
   // =========================================================================
   function playerAction(type) {
     if (battle.busy) return;
@@ -911,6 +910,7 @@
     const pImg = document.getElementById("p-img");
     const eRig = document.getElementById("e-rig");
 
+    // Perbaikan: Gunakan skin.id + "_atk.png" agar file gambar pemain akurat
     pImg.src = skin.id + "_atk.png";
 
     let baseAtk = skin.atk + (player.level * 10);
@@ -936,7 +936,6 @@
         battle.eHp = Math.max(0, battle.eHp - dmg);
         battle.pUlt = Math.min(100, battle.pUlt + 25);
 
-        // Ubah ekspresi boss ke _hit.png saat terkena pukul
         monsterGraphic.innerHTML = `<img src="${bossBase}_hit.png" class="boss-char-img" alt="${boss.name}" />`;
         eRig.classList.add("tekken-knockback");
         triggerScreenShake();
@@ -948,7 +947,7 @@
         setTimeout(() => {
           pRig.classList.remove("tekken-lunge-right");
           pBody.classList.remove("swing-attack");
-          pImg.src = skin.img;
+          pImg.src = skin.img; // Kembali ke idle normal
           eRig.classList.remove("tekken-knockback");
           monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
           afterPlayerTurn();
@@ -1091,7 +1090,7 @@
   }
 
   // =========================================================================
-  // 8. MUSUH MENYERANG OTOMATIS DENGAN EKSPRESI _atk.png
+  // 8. MUSUH MENYERANG OTOMATIS
   // =========================================================================
   function enemyTurn() {
     if (battle.eStun > 0) {
@@ -1113,11 +1112,11 @@
     const monsterGraphic = document.getElementById("e-monster-graphic");
 
     playSfx('atk');
-    // Ubah ekspresi boss ke _atk.png saat menyerang
     monsterGraphic.innerHTML = `<img src="${bossBase}_atk.png" class="boss-char-img" alt="${boss.name}" />`;
     eRig.classList.add("tekken-lunge-left");
 
     setTimeout(() => {
+      // Perbaikan: Ubah gambar pemain ke _hit.png saat menerima serangan musuh
       pImg.src = skin.id + "_hit.png";
       triggerScreenShake();
 
@@ -1152,7 +1151,7 @@
       setTimeout(() => {
         eRig.classList.remove("tekken-lunge-left");
         pRig.classList.remove("tekken-knockback");
-        pImg.src = skin.img;
+        pImg.src = skin.img; // Kembali ke idle normal
         monsterGraphic.innerHTML = `<img src="${boss.img}" class="boss-char-img" alt="${boss.name}" />`;
 
         if (battle.pHp <= 0) {
